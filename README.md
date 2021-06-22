@@ -14,7 +14,7 @@ Due to Covid 19, an ad hoc job posting platform has emerged to provide more job 
 3. To make searching speed quicker in task_bid table, `task_id` and `task_bidder_rate` has been set to `Index`.
 4. To minimise the space occupation, some field has been set with unsigned number, for instance the mobile number I set it to `INT UNSIGNED` it can provide 0~4_294_967_295 10 digits while it's 4 bytes.
 
-The sql file can be found [here]().
+The sql file can be found [here](https://github.com/qinchenfeng/ProjectGoLiveRun4BackEnd/blob/master/doc/sql/mysql.sql).
 
 
 ## Core feature

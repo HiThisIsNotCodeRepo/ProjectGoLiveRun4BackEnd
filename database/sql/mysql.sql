@@ -24,6 +24,7 @@ CREATE TABLE task
     task_to VARCHAR(100) COMMENT 'task to address',
     task_create DATETIME COMMENT 'task create datetime',
     task_start DATETIME COMMENT 'task start datetime',
+    task_complete DATETIME COMMENT 'task complete datetime',
     task_duration SMALLINT UNSIGNED COMMENT 'task duration in mins 0~65535',
     task_step TINYINT UNSIGNED COMMENT 'task current step 0~255',
     task_owner_id  VARCHAR(36) COMMENT 'task owner user id UUID',

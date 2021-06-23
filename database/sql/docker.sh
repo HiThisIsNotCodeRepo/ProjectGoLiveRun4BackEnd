@@ -2,6 +2,7 @@
 docker stop my-sql
 docker system prune -a --volumes
 # delete container
+docker stop my-sql
 docker rm my-sql
 docker run --name my-sql -dp 3306:3306 -e MYSQL_ROOT_PASSWORD=password  mysql:latest
 docker cp mysql.sql my-sql:/tmp/

@@ -48,6 +48,6 @@ CREATE TABLE category
     PRIMARY KEY(cid)
 );
 CREATE USER 'user'@'%' IDENTIFIED BY 'password';
-GRANT ALL PRIVILEGES ON  gomsone.* TO 'user'@'%';
+GRANT ALL PRIVILEGES ON  paotui.* TO 'user'@'%';
 FLUSH PRIVILEGES;
 

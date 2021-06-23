@@ -16,7 +16,20 @@ Due to Covid 19, an ad hoc job posting platform has emerged to provide more job 
 
 The sql file can be found [here](https://github.com/qinchenfeng/ProjectGoLiveRun4BackEnd/blob/master/doc/sql/mysql.sql).
 
+## mySQL connection time issue
+When deal with MySQL with Docker if the container timezone is not set properly, the record datetime may not be correct. By default the timezone in image is [UTC/Universal Time Coordinated / Universal Coordinated Time](https://www.timeanddate.com/worldclock/timezone/utc).
 
+In order to set it to local time we need to:
+1. Get in to container bash and reset `/etc/localtime`
+```shell
+ln -sf /usr/share/zoneinfo/Asia/Singapore /etc/localtime
+exit
+```
+after that reset container.
+```shell
+docker restart my-sql
+```
+2. In go put `charset=utf8&parseTime=True&loc=Local` after database connection url.
 ## Core feature
 1. User registeration
 2. User login

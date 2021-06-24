@@ -30,6 +30,17 @@ after that reset container.
 docker restart my-sql
 ```
 2. In go put `charset=utf8&parseTime=True&loc=Local` after database connection url.
+## Handle CORS in gorilla
+Example in [github](https://github.com/gorilla/mux#handling-cors-requests)
+## SQL Note
+Get current week's Sunday
+```sql
+select subdate(curdate(),date_format(curdate(),'%w')-7)
+```
+Convert datetime to y-m-d
+```sql
+select DATE_FORMAT(task_complete, '%Y-%m-%d') from task
+```
 ## Core feature
 1. User registeration
 2. User login

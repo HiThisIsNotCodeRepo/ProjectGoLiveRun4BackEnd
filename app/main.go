@@ -10,7 +10,9 @@ import (
 func main() {
 	r := mux.NewRouter()
 	s := r.PathPrefix("/api/v1").Subrouter()
-	s = router.SpendRouter(s)
+	s = router.SpendCardRouter(s)
+	s = router.SpendSummaryRouter(s)
+	s = router.SpendTaskRouter(s)
 	s.Use(mux.CORSMethodMiddleware(s))
 	log.Fatalln(http.ListenAndServe(":5000", s))
 }

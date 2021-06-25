@@ -18,7 +18,7 @@ func main() {
 	var db *sql.DB
 	db, err = sql.Open("mysql", "user:password@tcp(:3306)/paotui?charset=utf8&parseTime=True&loc=Local")
 	if err != nil {
-		fmt.Println("error in database connection")
+		fmt.Println(err)
 	}
 	clearDB(db, err)
 	categoryInit(db, err)
@@ -28,38 +28,38 @@ func main() {
 func clearDB(db *sql.DB, err error) {
 	_, err = db.Exec("DELETE FROM category")
 	if err != nil {
-		fmt.Println(`error in db.Exec("DELETE FROM category")`)
+		fmt.Println(err)
 	}
 	_, err = db.Exec("DELETE FROM task")
 	if err != nil {
-		fmt.Println(`error in db.Exec("DELETE FROM task")`)
+		fmt.Println(err)
 	}
 	_, err = db.Exec("DELETE FROM task_bid")
 	if err != nil {
-		fmt.Println(`error in db.Exec("DELETE FROM task_bid")`)
+		fmt.Println(err)
 	}
 	_, err = db.Exec("DELETE FROM user")
 	if err != nil {
-		fmt.Println(`error in db.Exec("DELETE FROM user")`)
+		fmt.Println(err)
 	}
 }
 func categoryInit(db *sql.DB, err error) {
 	// Category
 	_, err = db.Exec("INSERT INTO category (cid,title) VALUES(?,?)", "0", "Buy Necessity")
 	if err != nil {
-		fmt.Println(`error in db.Exec("INSERT INTO category (cid,title) VALUES(?,?)", "0", "Buy Necessity")`)
+		fmt.Println(err)
 	}
 	_, err = db.Exec("INSERT INTO category (cid,title) VALUES(?,?)", "1", "Send Document")
 	if err != nil {
-		fmt.Println(`error in db.Exec("INSERT INTO category (cid,title) VALUES(?,?)", "1", "Send Document")`)
+		fmt.Println(err)
 	}
 	_, err = db.Exec("INSERT INTO category (cid,title) VALUES(?,?)", "2", "Food Delivery")
 	if err != nil {
-		fmt.Println(`error in db.Exec("INSERT INTO category (cid,title) VALUES(?,?)", "2", "Food Delivery")`)
+		fmt.Println(err)
 	}
 	_, err = db.Exec("INSERT INTO category (cid,title) VALUES(?,?)", "3", "Other")
 	if err != nil {
-		fmt.Println(`error in db.Exec("INSERT INTO category (cid,title) VALUES(?,?)", "3", "Other")`)
+		fmt.Println(err)
 	}
 }
 func userInit(db *sql.DB, err error) {
@@ -75,7 +75,7 @@ func userInit(db *sql.DB, err error) {
 		lastLogin := time.Now().Add(time.Hour * time.Duration(-i))
 		_, err = db.Exec("INSERT INTO user (uid,name,password,email,mobile_number,last_login) VALUES(?,?,?,?,?,?)", uid, name, password, email, mobileNumber, lastLogin)
 		if err != nil {
-			fmt.Println(`db.Exec("INSERT INTO user (uid,name,password,email,mobile_number,last_login) VALUES(?,?,?,?,?,?)", uid, name, password, email, mobileNumber, lastLogin)`)
+			fmt.Println(err)
 		}
 	}
 }
@@ -100,7 +100,7 @@ func taskInit(db *sql.DB, err error) {
 	populateAddress(addressArr)
 	getAllUidRow, getAllUidErr := db.Query("SELECT uid,name FROM user")
 	if getAllUidErr != nil {
-		fmt.Println(`error in db.Query("SELECT uid FROM user")`)
+		fmt.Println(getAllUidErr)
 	}
 	if getAllUidRow == nil {
 		fmt.Println(`getAllUidRow == nil`)
@@ -109,7 +109,7 @@ func taskInit(db *sql.DB, err error) {
 			var user User
 			err = getAllUidRow.Scan(&user.uid, &user.name)
 			if err != nil {
-				fmt.Println(`error in getAllUidRow.Scan(&uid)`)
+				fmt.Println(err)
 			}
 			*userArr = append(*userArr, user)
 
@@ -117,7 +117,7 @@ func taskInit(db *sql.DB, err error) {
 	}
 	getAllCategoryRow, getAllCategoryErr := db.Query("SELECT cid,title FROM category")
 	if getAllCategoryErr != nil {
-		fmt.Println(`error in db.Query("SELECT cid,title FROM user")`)
+		fmt.Println(getAllCategoryErr)
 	}
 	if getAllCategoryRow == nil {
 		fmt.Println(`getAllCateogryRow == nil`)
@@ -126,15 +126,24 @@ func taskInit(db *sql.DB, err error) {
 			var category Category
 			err = getAllCategoryRow.Scan(&category.cid, &category.title)
 			if err != nil {
-				fmt.Println(`error in getAllCategoryRow.Scan(&category.cid, &category.title)`)
+				fmt.Println(err)
 			}
 			*categoryArr = append(*categoryArr, category)
 
 		}
 	}
 	currentDayOfWeek := int(time.Now().Weekday())
+	rand.Seed(time.Now().UnixNano())
+	newTime := time.Now()
+	randNum := rand.Intn(5)
+	if time.Now().Hour() < 14 {
+
+		newTime = time.Now().Add(time.Hour * (time.Duration(14 + randNum - time.Now().Hour())))
+	} else {
+		newTime = time.Now().Add(-time.Hour * (time.Duration(time.Now().Hour() - 14 + randNum)))
+	}
 	for i := -(currentDayOfWeek + 6); i < 0; i++ {
-		tempTime := time.Now().AddDate(0, 0, i)
+		tempTime := newTime.AddDate(0, 0, i)
 		for _, v := range *userArr {
 			for j := 0; j < 5; j++ {
 				tempUidArr := new([]string)
@@ -145,7 +154,7 @@ func taskInit(db *sql.DB, err error) {
 				}
 				taskId := uuid.NewV4().String()
 				taskIdLast4Char := getLast4Char(taskId)
-				rand.Seed(time.Now().UnixNano())
+
 				categoryLen := len(*categoryArr)
 				randIndexForCategory := rand.Intn(categoryLen)
 				taskTitle := fmt.Sprintf("%s-%s", (*categoryArr)[randIndexForCategory].title, taskIdLast4Char)
@@ -155,8 +164,8 @@ func taskInit(db *sql.DB, err error) {
 				fromLocation := (*addressArr)[indexForFrom].locationName
 				indexForTo := rand.Intn(addressLen)
 				toLocation := (*addressArr)[indexForTo].locationName
-				createTime := tempTime.Add(time.Hour * (-2))
-				startTime := tempTime.Add(time.Hour * (-1))
+				createTime := tempTime.Add(time.Hour * time.Duration((-2)*j))
+				startTime := tempTime.Add(time.Hour * time.Duration((-2)*j))
 				difference := (*addressArr)[indexForFrom].index - (*addressArr)[indexForTo].index
 				if difference < 0 {
 					difference = -1 * difference
@@ -171,7 +180,7 @@ func taskInit(db *sql.DB, err error) {
 				fmt.Printf("task_id:%v\ntask_title:%v\ntask_description:%v\ntask_category_id:%v\ntask_from:%v\ntask_to:%v\ntask_create:%v\ntask_start:%v\ntask_complete:%v\ntask_duration:%v\ntask_step:%v\ntask_ownder_id:%v\ntask_owner_rate:%v\ntask_deliver_id:%v\ntask_deliver_rate:%v\n", taskId, taskTitle, taskDescription, randIndexForCategory, fromLocation, toLocation, createTime, startTime, completeTime, duration, taskStep, v.uid, ownerRate, taskDeliverId, deliverRate)
 				_, err = db.Exec("INSERT INTO task (task_id,task_title,task_description,task_category_id,task_from,task_to,task_create,task_start,task_complete,task_duration,task_step,task_owner_id,task_owner_rate,task_deliver_id,task_deliver_rate) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", taskId, taskTitle, taskDescription, randIndexForCategory, fromLocation, toLocation, createTime, startTime, completeTime, duration, taskStep, v.uid, ownerRate, taskDeliverId, deliverRate)
 				if err != nil {
-					fmt.Println(`error in db.Exec("INSERT INTO task (task_id,task_title,task_description,task_category_id,task_from,task_to,task_create,task_start,task_complete,task_duration,task_step,task_owner_id,task_owner_rate,task_deliver_id,task_deliver_rate) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", taskId, taskTitle, taskDescription, randIndexForCategory, fromLocation, toLocation,createTime,startTime,completeTime,taskStep,taskStep, v.uid,ownerRate,taskDeliverId,deliverRate)`)
+					fmt.Println(err)
 				}
 			}
 

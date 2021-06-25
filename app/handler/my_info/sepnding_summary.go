@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-const SQLSummary = `select task_complete , task_id,task_category_id,task_deliver_rate ,datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),subdate(curdate(),date_format(curdate(),'%w')-7)) 
+const SQLSpendingSummary = `select task_complete , task_id,task_category_id,task_deliver_rate ,datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),subdate(curdate(),date_format(curdate(),'%w')-7)) 
 from task where task_owner_id=? AND datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),subdate(curdate(),date_format(curdate(),'%w')-7)) > -14`
 
 type SpendingSummaryResponse struct {
@@ -61,7 +61,7 @@ func GetSummary(w http.ResponseWriter, r *http.Request) {
 		goto Label0
 	}
 
-	getAllRows, err = db.Db.Query(SQLSummary, userID)
+	getAllRows, err = db.Db.Query(SQLSpendingSummary, userID)
 	if err != nil {
 		fmt.Println(err)
 		goto Label0

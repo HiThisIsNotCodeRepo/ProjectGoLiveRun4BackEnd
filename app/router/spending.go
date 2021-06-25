@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"net/http"
-	"paotui.sg/app/handler/my-info"
+	"paotui.sg/app/handler/my_info"
 )
 
 const (
@@ -29,7 +29,7 @@ func SpendCardRouter(s *mux.Router) *mux.Router {
 		for _, tempCategoryUrl := range categoryArray {
 			url := fmt.Sprintf("%s%s%s%s", SpendingURL, tempDateUrl, tempCategoryUrl, userIDURL)
 			fmt.Println(url)
-			s.HandleFunc(url, my_info.GetSpending).Methods(http.MethodGet, http.MethodOptions)
+			s.HandleFunc(url, my_info.GetSpendingCard).Methods(http.MethodGet, http.MethodOptions)
 		}
 	}
 	return s
@@ -45,6 +45,7 @@ func SpendSummaryRouter(s *mux.Router) *mux.Router {
 }
 func SpendTaskRouter(s *mux.Router) *mux.Router {
 	url := fmt.Sprintf("%s%s%s", SpendingURL, "/tasks", userIDURL)
-	s.HandleFunc(url, my_info.GetSpendingTask).Methods(http.MethodGet, http.MethodOptions)
+	fmt.Println(url)
+	s.HandleFunc(url, my_info.GetSpendingDataSource).Methods(http.MethodGet, http.MethodOptions)
 	return s
 }

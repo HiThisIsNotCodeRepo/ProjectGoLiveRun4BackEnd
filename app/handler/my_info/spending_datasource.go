@@ -10,8 +10,8 @@ import (
 	"strings"
 )
 
-const SQLSpendingDataSource = `select task_complete ,task_title,task_category_id,task_owner_id,task_deliver_id ,task_from,task_to,task_deliver_rate,datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),subdate(curdate(),date_format(curdate(),'%w')-7)) from task
-where task_owner_id=? AND datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),subdate(curdate(),date_format(curdate(),'%w')-7)) > -30 order by task_complete`
+const SQLSpendingDataSource = `select task_complete ,task_title,task_category_id,task_owner_id,task_deliver_id ,task_from,task_to,task_deliver_rate,datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),curdate()) from task
+where task_owner_id=? AND datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),curdate()) > -30 order by task_complete`
 
 type SpendingDataSourceResponse struct {
 	Status string         `json:"status"`
@@ -50,13 +50,12 @@ func GetSpendingDataSource(w http.ResponseWriter, r *http.Request) {
 	}
 
 	getAllRows, err = db.Db.Query(SQLSpendingDataSource, userID)
+	defer getAllRows.Close()
 	if err != nil {
 		fmt.Println(err)
 		goto Label0
 	}
-	if getAllRows == nil {
-		tasks = nil
-	} else {
+	if getAllRows != nil {
 		i := 1
 		for getAllRows.Next() {
 			var taskCompleteDate string

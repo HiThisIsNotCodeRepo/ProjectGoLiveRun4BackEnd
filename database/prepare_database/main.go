@@ -1,12 +1,11 @@
 package main
 
 import (
-	"crypto/sha256"
 	"database/sql"
-	"encoding/base64"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	uuid "github.com/satori/go.uuid"
+	"golang.org/x/crypto/bcrypt"
 	"math"
 	"math/rand"
 	"strings"
@@ -63,13 +62,16 @@ func categoryInit(db *sql.DB, err error) {
 	}
 }
 func userInit(db *sql.DB, err error) {
+	var hash []byte
 	//	User
 	for i := 1; i <= 5; i++ {
 		uid := uuid.NewV4().String()
 		name := fmt.Sprintf("user%d", i)
-		h := sha256.New()
-		h.Write([]byte(fmt.Sprintf("user%d", i)))
-		password := base64.StdEncoding.EncodeToString(h.Sum(nil))
+		hash, err = bcrypt.GenerateFromPassword([]byte(fmt.Sprintf("user%d", i)), bcrypt.DefaultCost)
+		if err != nil {
+			fmt.Println(err)
+		}
+		password := string(hash)
 		email := fmt.Sprintf("user%d@email.com", i)
 		mobileNumber := 84994075
 		lastLogin := time.Now().Add(time.Hour * time.Duration(-i))
@@ -132,7 +134,7 @@ func taskInit(db *sql.DB, err error) {
 
 		}
 	}
-	currentDayOfWeek := int(time.Now().Weekday())
+	//currentDayOfWeek := int(time.Now().Weekday())
 	rand.Seed(time.Now().UnixNano())
 	newTime := time.Now()
 	randNum := rand.Intn(5)
@@ -142,7 +144,8 @@ func taskInit(db *sql.DB, err error) {
 	} else {
 		newTime = time.Now().Add(-time.Hour * (time.Duration(time.Now().Hour() - 14 + randNum)))
 	}
-	for i := -(currentDayOfWeek + 6); i < 0; i++ {
+	//for i := -(currentDayOfWeek + 6); i < 0; i++ {
+	for i := -14; i < 0; i++ {
 		tempTime := newTime.AddDate(0, 0, i)
 		for _, v := range *userArr {
 			for j := 0; j < 5; j++ {

@@ -49,6 +49,7 @@ func GetEarningCard(w http.ResponseWriter, r *http.Request) {
 	}
 
 	getAllRows, err = db.Db.Query(SQLEarningCard, userID)
+	defer getAllRows.Close()
 	if err != nil {
 		fmt.Println(err)
 		goto Label0

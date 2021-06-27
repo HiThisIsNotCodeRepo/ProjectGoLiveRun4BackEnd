@@ -13,4 +13,5 @@ func main() {
 		newTime := time.Now().Add(-time.Hour * (time.Duration(time.Now().Hour()) - 12))
 		fmt.Println(newTime)
 	}
+	fmt.Println(time.Now().Weekday()==0)
 }

@@ -70,6 +70,7 @@ func GetSpendingCard(w http.ResponseWriter, r *http.Request) {
 	}
 	baseSql = "SELECT count(*) FROM task WHERE task_owner_id = ?"
 	finalSql = fmt.Sprintf("%s %s %s", baseSql, categoryFilterCondition, dateFilterCondition)
+	fmt.Printf("Spending card userID:%v final sql:%v\n", userID, finalSql)
 	err = db.Db.QueryRow(finalSql, userID).Scan(&taskCount)
 	if err != nil {
 		fmt.Println(err)

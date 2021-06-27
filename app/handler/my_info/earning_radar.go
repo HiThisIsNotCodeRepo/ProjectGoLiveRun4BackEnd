@@ -8,10 +8,13 @@ import (
 	"net/http"
 	"paotui.sg/app/db"
 	"strings"
+	"time"
 )
 
-const SQLEarningRadar = `select task_complete , task_id,task_category_id,task_deliver_rate ,datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),subdate(curdate(),date_format(curdate(),'%w')-7)) 
+const SQLEarningRadarNonSun = `select task_complete , task_id,task_category_id,task_deliver_rate ,datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),subdate(curdate(),date_format(curdate(),'%w')-7)) 
 from task where task_deliver_id=? AND datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),subdate(curdate(),date_format(curdate(),'%w')-7)) > -14`
+const SQLEarningRadarSun = `select task_complete , task_id,task_category_id,task_deliver_rate ,datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),curdate())
+from task where task_deliver_id=? AND datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),curdate()) > -14`
 
 type EarningRadarResponse struct {
 	Status       string `json:"status"`
@@ -40,6 +43,7 @@ func GetEarningRadar(w http.ResponseWriter, r *http.Request) {
 	var foodDeliveryArr = make([]int, 2)
 	var sendDocumentArr = make([]int, 2)
 	var otherArr = make([]int, 2)
+	var finalSQL string
 	fmt.Printf("request URI:%v\n", r.RequestURI)
 	encoder := json.NewEncoder(w)
 	userID := mux.Vars(r)["userID"]
@@ -56,8 +60,13 @@ func GetEarningRadar(w http.ResponseWriter, r *http.Request) {
 	} else {
 		goto Label0
 	}
-
-	getAllRows, err = db.Db.Query(SQLEarningRadar, userID)
+	if time.Now().Weekday() == 0 {
+		finalSQL = SQLEarningRadarSun
+	} else {
+		finalSQL = SQLEarningRadarNonSun
+	}
+	getAllRows, err = db.Db.Query(finalSQL, userID)
+	defer getAllRows.Close()
 	if err != nil {
 		fmt.Println(err)
 		goto Label0

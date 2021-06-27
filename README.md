@@ -28,30 +28,36 @@ penalty.
    it to `INT UNSIGNED` it can provide 0~4_294_967_295 10 digits while it's 4 bytes.
 
 The sql file can be found [here](https://github.com/qinchenfeng/ProjectGoLiveRun4BackEnd/blob/master/doc/sql/mysql.sql).
+## Authrorisation with token
+The main strategy is to encrypt a piece of text hold user info and expire time. Everytime when front end access restricted website it needs to send token for verification. Here I verified if username in url and token is the same and token has expired or not.
 
 ## Update on api
 
 | No  | API URL| 
 | -------- | -------- | 
-| 1    | /spending/yesterday/buy-necessity/{userID}    | 
-|2|/spending/yesterday/food-delivery/{userID}            |
-|3|/spending/yesterday/send-document/{userID}            |
-|4|/spending/yesterday/other/{userID}                    |
-|5|/spending/two-days-ago/buy-necessity/{userID}         |
-|6|/spending/two-days-ago/food-delivery/{userID}         |
-|7|/spending/two-days-ago/send-document/{userID}         |
-|8|/spending/two-days-ago/other/{userID}                 |
-|9|/spending/three-days-ago/buy-necessity/{userID}       |
-|10|/spending/three-days-ago/food-delivery/{userID}       |
-|11|/spending/three-days-ago/send-document/{userID}       |
-|12|/spending/three-days-ago/other/{userID}               |
-|13|/spending/this-week/summary/{userID}                  |
-|14|/spending/last-week/summary/{userID}                  |
-|15|/spending/tasks/{userID}                              |
-|16|/earning/tasks/{userID}                               |
-|17|/earning/past-days/{userID}                           |
-|18|/earning/radar/last-week/{userID}                     |
-|19|/earning/radar/this-week/{userID}                     |
+|1| /spending/yesterday/buy-necessity/{userID}|
+|2| /spending/yesterday/food-delivery/{userID}|
+|3| /spending/yesterday/send-document/{userID}|
+|4| /spending/yesterday/other/{userID}|
+|5| /spending/two-days-ago/buy-necessity/{userID}|
+|6| /spending/two-days-ago/food-delivery/{userID}|
+|7| /spending/two-days-ago/send-document/{userID}|
+|8| /spending/two-days-ago/other/{userID}|
+|9| /spending/three-days-ago/buy-necessity/{userID}|
+|10|/spending/three-days-ago/food-delivery/{userID}|
+|11|/spending/three-days-ago/send-document/{userID}|
+|12|/spending/three-days-ago/other/{userID}|
+|13|/spending/this-week/summary/{userID}|
+|14|/spending/last-week/summary/{userID}|
+|15|/spending/tasks/{userID}|
+|16|/earning/tasks/{userID}|
+|17|/earning/past-days/{userID}|
+|18|/earning/last-week/radar/{userID}|
+|19|/earning/this-week/radar/{userID}|
+|20|/tasks/task|
+|21|/auth/login|
+|22|/auth/token-verify/{userID}
+|
 
 ## mySQL connection time issue
 
@@ -82,7 +88,7 @@ Example in [github](https://github.com/gorilla/mux#handling-cors-requests)
 
 ## SQL Note
 
-Get current week's Sunday
+Get current week's Sunday, if today is Sunday it will fall on next Sunday
 
 ```sql
 select subdate(curdate(), date_format(curdate(), '%w') - 7)

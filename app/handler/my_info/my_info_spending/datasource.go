@@ -1,4 +1,4 @@
-package my_info
+package my_info_spending
 
 import (
 	"database/sql"
@@ -10,15 +10,15 @@ import (
 	"strings"
 )
 
-const SQLEarningDataSource = `select task_complete ,task_title,task_category_id,task_owner_id,task_deliver_id ,task_from,task_to,task_deliver_rate,datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),curdate()) from task
-where task_deliver_id=? AND datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),curdate()) > -30 order by task_complete`
+const SQLSpendingDataSource = `select task_complete ,task_title,task_category_id,task_owner_id,task_deliver_id ,task_from,task_to,task_deliver_rate,datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),curdate()) from task
+where task_owner_id=? AND datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),curdate()) > -30 order by task_complete`
 
-type EarningDataSourceResponse struct {
-	Status string        `json:"status"`
-	Msg    string        `json:"msg"`
-	Tasks  []EarningTask `json:"tasks"`
+type DataSourceResponse struct {
+	Status string         `json:"status"`
+	Msg    string         `json:"msg"`
+	Tasks  []SpendingTask `json:"tasks"`
 }
-type EarningTask struct {
+type SpendingTask struct {
 	No               int    `json:"no"`
 	CompleteDateTime string `json:"completeDateTime"`
 	TaskTitle        string `json:"taskTitle"`
@@ -30,17 +30,12 @@ type EarningTask struct {
 	TaskDeliverRate  int    `json:"taskDeliverRate"`
 }
 
-func GetEarningDataSource(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "*")
-	if r.Method == http.MethodOptions {
-		return
-	}
-	var getSpendingTaskResponse SpendingDataSourceResponse
+func DataSource(w http.ResponseWriter, r *http.Request) {
+	var getSpendingTaskResponse DataSourceResponse
 	var err error
 	var getAllRows *sql.Rows
 	tasks := make([]SpendingTask, 0)
-	fmt.Printf("request URI:%v\n", r.RequestURI)
+	fmt.Printf("datasource->request URI:%v\n", r.RequestURI)
 	encoder := json.NewEncoder(w)
 	userID := mux.Vars(r)["userID"]
 	if strings.TrimSpace(userID) == "" {
@@ -49,7 +44,7 @@ func GetEarningDataSource(w http.ResponseWriter, r *http.Request) {
 		goto Label1
 	}
 
-	getAllRows, err = db.Db.Query(SQLEarningDataSource, userID)
+	getAllRows, err = db.Db.Query(SQLSpendingDataSource, userID)
 	defer getAllRows.Close()
 	if err != nil {
 		fmt.Println(err)
@@ -100,4 +95,13 @@ Label1:
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+}
+func getLast4Char(str string) string {
+	strArr := strings.Split(str, "-")
+	lastStrByteArr := []byte(strArr[len(strArr)-1])
+	var last4ByteArr []byte
+	for i := len(lastStrByteArr) - 4; i < len(lastStrByteArr); i++ {
+		last4ByteArr = append(last4ByteArr, lastStrByteArr[i])
+	}
+	return string(last4ByteArr)
 }

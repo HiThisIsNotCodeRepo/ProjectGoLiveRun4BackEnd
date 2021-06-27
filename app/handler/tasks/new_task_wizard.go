@@ -1,4 +1,4 @@
-package new_task
+package tasks
 
 import (
 	"encoding/json"

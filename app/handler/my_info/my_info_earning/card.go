@@ -1,4 +1,4 @@
-package my_info
+package my_info_earning
 
 import (
 	"database/sql"
@@ -13,7 +13,7 @@ import (
 const SQLEarningCard = `select task_complete ,task_title,task_category_id,task_owner_id,task_deliver_id ,task_from,task_to,task_deliver_rate,datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),DATE_FORMAT(curdate(), '%Y-%m-%d')) from task
 where task_deliver_id=? AND datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),DATE_FORMAT(curdate(), '%Y-%m-%d')) > -11 order by task_complete DESC`
 
-type EarningCardResponse struct {
+type CardResponse struct {
 	Status            string `json:"status"`
 	Msg               string `json:"msg"`
 	PastTwoDaysTotal  int    `json:"pastTwoDaysTotal"`
@@ -24,13 +24,8 @@ type EarningCardResponse struct {
 	PastTenDays       []int  `json:"pastTenDays"`
 }
 
-func GetEarningCard(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "*")
-	if r.Method == http.MethodOptions {
-		return
-	}
-	var getEarningCardResponse EarningCardResponse
+func Card(w http.ResponseWriter, r *http.Request) {
+	var getEarningCardResponse CardResponse
 	var err error
 	var getAllRows *sql.Rows
 	var pastTwoDays = make([]int, 2)
@@ -39,7 +34,7 @@ func GetEarningCard(w http.ResponseWriter, r *http.Request) {
 	var pastTwoDaysTotal int
 	var pastFiveDaysTotal int
 	var pastTenDaysTotal int
-	fmt.Printf("request URI:%v\n", r.RequestURI)
+	fmt.Printf("card->request URI:%v\n", r.RequestURI)
 	encoder := json.NewEncoder(w)
 	userID := mux.Vars(r)["userID"]
 	if strings.TrimSpace(userID) == "" {

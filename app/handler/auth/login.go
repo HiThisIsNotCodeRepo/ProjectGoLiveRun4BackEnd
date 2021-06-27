@@ -31,12 +31,7 @@ type UserLoginResponse struct {
 	Email     string `json:"email"`
 }
 
-func UserLogin(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "*")
-	if r.Method == http.MethodOptions {
-		return
-	}
+func Login(w http.ResponseWriter, r *http.Request) {
 	var userLoginRequest = UserLoginRequest{}
 	var userLoginResponse UserLoginResponse
 	var storedPassword string
@@ -48,7 +43,7 @@ func UserLogin(w http.ResponseWriter, r *http.Request) {
 	var object *jose.JSONWebEncryption
 	var token string
 	var email string
-	fmt.Printf("request URI:%v\n", r.RequestURI)
+	fmt.Printf("login->request URI:%v\n", r.RequestURI)
 	encoder := json.NewEncoder(w)
 	decoder := json.NewDecoder(r.Body)
 	err = decoder.Decode(&userLoginRequest)

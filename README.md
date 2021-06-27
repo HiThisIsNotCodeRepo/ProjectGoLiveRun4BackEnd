@@ -35,29 +35,30 @@ The main strategy is to encrypt a piece of text hold user info and expire time. 
 
 | No  | API URL| 
 | -------- | -------- | 
-|1| /spending/yesterday/buy-necessity/{userID}|
-|2| /spending/yesterday/food-delivery/{userID}|
-|3| /spending/yesterday/send-document/{userID}|
-|4| /spending/yesterday/other/{userID}|
-|5| /spending/two-days-ago/buy-necessity/{userID}|
-|6| /spending/two-days-ago/food-delivery/{userID}|
-|7| /spending/two-days-ago/send-document/{userID}|
-|8| /spending/two-days-ago/other/{userID}|
-|9| /spending/three-days-ago/buy-necessity/{userID}|
-|10|/spending/three-days-ago/food-delivery/{userID}|
-|11|/spending/three-days-ago/send-document/{userID}|
-|12|/spending/three-days-ago/other/{userID}|
-|13|/spending/this-week/summary/{userID}|
-|14|/spending/last-week/summary/{userID}|
-|15|/spending/tasks/{userID}|
-|16|/earning/tasks/{userID}|
-|17|/earning/past-days/{userID}|
-|18|/earning/last-week/radar/{userID}|
-|19|/earning/this-week/radar/{userID}|
-|20|/tasks/task|
-|21|/auth/login|
-|22|/auth/token-verify/{userID}
-|
+|1| ~~/spending/yesterday/buy-necessity/{userID}~~|
+|2| ~~/spending/yesterday/food-delivery/{userID}~~|
+|3| ~~/spending/yesterday/send-document/{userID}~~|
+|4| ~~/spending/yesterday/other/{userID}~~|
+|5| ~~/spending/two-days-ago/buy-necessity/{userID}~~|
+|6| ~~/spending/two-days-ago/food-delivery/{userID}~~|
+|7| ~~/spending/two-days-ago/send-document/{userID}~~|
+|8| ~~/spending/two-days-ago/other/{userID}~~|
+|9| ~~/spending/three-days-ago/buy-necessity/{userID}~~|
+|10|~~/spending/three-days-ago/food-delivery/{userID}~~|
+|11|~~/spending/three-days-ago/send-document/{userID}~~|
+|12|~~/spending/three-days-ago/other/{userID}~~|
+|13|~~/spending/this-week/summary/{userID}~~|
+|14|~~/spending/last-week/summary/{userID}~~|
+|15|~~/spending/tasks/{userID}~~|
+|16|~~/earning/tasks/{userID}~~|
+|17|~~/earning/past-days/{userID}~~|
+|18|~~/earning/last-week/radar/{userID}~~|
+|19|~~/earning/this-week/radar/{userID}~~|
+|20|~~/tasks/task~~|
+|21|~~/auth/login~~|
+|22|~~/auth/token-verify/{userID}~~|
+                                   
+That was too verbose, most above url are for query data, we can replace them with query string.
 
 ## mySQL connection time issue
 

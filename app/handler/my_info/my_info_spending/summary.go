@@ -1,4 +1,4 @@
-package my_info
+package my_info_spending
 
 import (
 	"database/sql"
@@ -16,7 +16,7 @@ from task where task_owner_id=? AND datediff(DATE_FORMAT(task_complete, '%Y-%m-%
 const SQLSpendingSummarySun = `select task_complete , task_id,task_category_id,task_deliver_rate ,datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),curdate())
 from task where task_owner_id=? AND datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),curdate()) > -14`
 
-type SpendingSummaryResponse struct {
+type SummaryResponse struct {
 	Status                    string `json:"status"`
 	Msg                       string `json:"msg"`
 	LineData                  []int  `json:"lineData"`
@@ -29,13 +29,8 @@ type SpendingSummaryResponse struct {
 	OtherCategoryCount        int    `json:"other"`
 }
 
-func GetSummary(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "*")
-	if r.Method == http.MethodOptions {
-		return
-	}
-	var getSummaryResponse SpendingSummaryResponse
+func Summary(w http.ResponseWriter, r *http.Request) {
+	var getSummaryResponse SummaryResponse
 	var err error
 	var getAllRows *sql.Rows
 	var lastWeekFlag bool
@@ -48,18 +43,20 @@ func GetSummary(w http.ResponseWriter, r *http.Request) {
 	foodDeliveryCategoryCount := make([]int, 2)
 	sendDocumentCategoryCount := make([]int, 2)
 	otherCategoryCount := make([]int, 2)
-	fmt.Printf("request URI:%v\n", r.RequestURI)
 	encoder := json.NewEncoder(w)
 	userID := mux.Vars(r)["userID"]
+	date := r.URL.Query().Get("date")
+	fmt.Printf("summary->URI:%v\n", r.RequestURI)
+	fmt.Printf("summary->userID:%v,date:%v\n", userID, date)
 	if strings.TrimSpace(userID) == "" {
 		getSummaryResponse.Status = "error"
 		getSummaryResponse.Msg = "no userID"
 		goto Label1
 	}
 
-	if strings.Contains(r.RequestURI, "last-week") {
+	if date == "last-week" {
 		lastWeekFlag = true
-	} else if strings.Contains(r.RequestURI, "this-week") {
+	} else if date == "this-week" {
 		lastWeekFlag = false
 	} else {
 		goto Label0

@@ -1,4 +1,4 @@
-package my_info
+package my_info_spending
 
 import (
 	"encoding/json"
@@ -17,60 +17,58 @@ const YesterdayFilterCondition = "AND TO_DAYS(NOW()) - TO_DAYS(task_complete) <=
 const TwoDaysAgoFilterCondition = "AND TO_DAYS(NOW()) -TO_DAYS(task_complete) > 1 AND TO_DAYS(NOW()) -TO_DAYS(task_complete) <= 2"
 const ThreeDaysAgoFilterCondition = "AND TO_DAYS(NOW()) -TO_DAYS(task_complete) > 2 AND TO_DAYS(NOW()) -TO_DAYS(task_complete) <= 3"
 
-type SpendingCardResponse struct {
+type CardResponse struct {
 	Status    string `json:"status"`
 	Msg       string `json:"msg"`
 	TaskCount int    `json:"taskCount"`
 	TaskSpend int    `json:"taskSpend"`
 }
 
-func GetSpendingCard(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "*")
-	if r.Method == http.MethodOptions {
-		return
-	}
+func Card(w http.ResponseWriter, r *http.Request) {
 	var baseSql string
 	var finalSql string
-	var getBuyNecessitySpendingYesterdayResponse SpendingCardResponse
+	var getCardResponse CardResponse
 	var err error
 	var taskCount int
 	var taskSpend int
 	var categoryFilterCondition string
 	var dateFilterCondition string
-	fmt.Printf("request URI:%v\n", r.RequestURI)
 	encoder := json.NewEncoder(w)
 	userID := mux.Vars(r)["userID"]
+	date := r.URL.Query().Get("date")
+	category := r.URL.Query().Get("category")
+	fmt.Printf("card->request URI:%v\n", r.RequestURI)
+	fmt.Printf("card->userID:%v,date:%v,category:%v\n", userID, date, category)
 	if strings.TrimSpace(userID) == "" {
-		getBuyNecessitySpendingYesterdayResponse.Status = "error"
-		getBuyNecessitySpendingYesterdayResponse.Msg = "no userID"
+		getCardResponse.Status = "error"
+		getCardResponse.Msg = "no userID"
 		goto Label1
 	}
 
-	if strings.Contains(r.RequestURI, "buy-necessity") {
+	if category == "buy-necessity" {
 		categoryFilterCondition = BuyNecessityFilterCondition
-	} else if strings.Contains(r.RequestURI, "food-delivery") {
+	} else if category == "food-delivery" {
 		categoryFilterCondition = FoodDeliveryFilterCondition
-	} else if strings.Contains(r.RequestURI, "send-document") {
+	} else if category == "send-document" {
 		categoryFilterCondition = SendDocumentFilterCondition
-	} else if strings.Contains(r.RequestURI, "other") {
+	} else if category == "other" {
 		categoryFilterCondition = OtherFilterCondition
 	} else {
 		goto Label0
 	}
 
-	if strings.Contains(r.RequestURI, "yesterday") {
+	if date == "yesterday" {
 		dateFilterCondition = YesterdayFilterCondition
-	} else if strings.Contains(r.RequestURI, "two-days-ago") {
+	} else if date == "two-days-ago" {
 		dateFilterCondition = TwoDaysAgoFilterCondition
-	} else if strings.Contains(r.RequestURI, "three-days-ago") {
+	} else if date == "three-days-ago" {
 		dateFilterCondition = ThreeDaysAgoFilterCondition
 	} else {
 		goto Label0
 	}
 	baseSql = "SELECT count(*) FROM task WHERE task_owner_id = ?"
 	finalSql = fmt.Sprintf("%s %s %s", baseSql, categoryFilterCondition, dateFilterCondition)
-	fmt.Printf("Spending card userID:%v final sql:%v\n", userID, finalSql)
+	fmt.Printf("card->count sql:%v\n", finalSql)
 	err = db.Db.QueryRow(finalSql, userID).Scan(&taskCount)
 	if err != nil {
 		fmt.Println(err)
@@ -83,18 +81,19 @@ func GetSpendingCard(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		goto Label0
 	}
-	getBuyNecessitySpendingYesterdayResponse.Status = "success"
-	getBuyNecessitySpendingYesterdayResponse.Msg = fmt.Sprintf("task count:%v,task spend:%v", taskCount, taskSpend)
-	getBuyNecessitySpendingYesterdayResponse.TaskCount = taskCount
-	getBuyNecessitySpendingYesterdayResponse.TaskSpend = taskSpend
+	fmt.Printf("card->sum sql:%v\n", finalSql)
+	getCardResponse.Status = "success"
+	getCardResponse.Msg = fmt.Sprintf("task count:%v,task spend:%v", taskCount, taskSpend)
+	getCardResponse.TaskCount = taskCount
+	getCardResponse.TaskSpend = taskSpend
 
 Label0:
-	if getBuyNecessitySpendingYesterdayResponse.Status != "success" {
-		getBuyNecessitySpendingYesterdayResponse.Status = "error"
-		getBuyNecessitySpendingYesterdayResponse.Msg = "server error"
+	if getCardResponse.Status != "success" {
+		getCardResponse.Status = "error"
+		getCardResponse.Msg = "server error"
 	}
 Label1:
-	encodeErr := encoder.Encode(getBuyNecessitySpendingYesterdayResponse)
+	encodeErr := encoder.Encode(getCardResponse)
 	if encodeErr != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return

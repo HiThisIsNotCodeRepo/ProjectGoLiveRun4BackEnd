@@ -1,4 +1,4 @@
-package my_info
+package my_info_earning
 
 import (
 	"database/sql"
@@ -10,15 +10,15 @@ import (
 	"strings"
 )
 
-const SQLSpendingDataSource = `select task_complete ,task_title,task_category_id,task_owner_id,task_deliver_id ,task_from,task_to,task_deliver_rate,datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),curdate()) from task
-where task_owner_id=? AND datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),curdate()) > -30 order by task_complete`
+const SQLEarningDataSource = `select task_complete ,task_title,task_category_id,task_owner_id,task_deliver_id ,task_from,task_to,task_deliver_rate,datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),curdate()) from task
+where task_deliver_id=? AND datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),curdate()) > -30 order by task_complete`
 
-type SpendingDataSourceResponse struct {
-	Status string         `json:"status"`
-	Msg    string         `json:"msg"`
-	Tasks  []SpendingTask `json:"tasks"`
+type EarningDataSourceResponse struct {
+	Status string        `json:"status"`
+	Msg    string        `json:"msg"`
+	Tasks  []EarningTask `json:"tasks"`
 }
-type SpendingTask struct {
+type EarningTask struct {
 	No               int    `json:"no"`
 	CompleteDateTime string `json:"completeDateTime"`
 	TaskTitle        string `json:"taskTitle"`
@@ -30,17 +30,17 @@ type SpendingTask struct {
 	TaskDeliverRate  int    `json:"taskDeliverRate"`
 }
 
-func GetSpendingDataSource(w http.ResponseWriter, r *http.Request) {
+func DataSource(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "*")
 	if r.Method == http.MethodOptions {
 		return
 	}
-	var getSpendingTaskResponse SpendingDataSourceResponse
+	var getSpendingTaskResponse EarningDataSourceResponse
 	var err error
 	var getAllRows *sql.Rows
-	tasks := make([]SpendingTask, 0)
-	fmt.Printf("request URI:%v\n", r.RequestURI)
+	tasks := make([]EarningTask, 0)
+	fmt.Printf("datasource->request URI:%v\n", r.RequestURI)
 	encoder := json.NewEncoder(w)
 	userID := mux.Vars(r)["userID"]
 	if strings.TrimSpace(userID) == "" {
@@ -49,7 +49,7 @@ func GetSpendingDataSource(w http.ResponseWriter, r *http.Request) {
 		goto Label1
 	}
 
-	getAllRows, err = db.Db.Query(SQLSpendingDataSource, userID)
+	getAllRows, err = db.Db.Query(SQLEarningDataSource, userID)
 	defer getAllRows.Close()
 	if err != nil {
 		fmt.Println(err)
@@ -70,9 +70,10 @@ func GetSpendingDataSource(w http.ResponseWriter, r *http.Request) {
 			err = getAllRows.Scan(&taskCompleteDate, &taskTitle, &taskCategoryId, &taskOwnerId, &taskDeliveredId, &taskFrom, &taskTo, &taskDeliveryRate, &diff)
 			if err != nil {
 				fmt.Println(err)
+				goto Label0
 			}
 			fmt.Printf("taskCompleteDate:%v,taskTitle:%v,taskCategoryId:%v,taskOwnerId:%v,taskDeliveredId:%v,taskFrom:%v,taskTo:%v,expense:%v,diff:%v\n", taskCompleteDate, taskTitle, taskCategoryId, taskOwnerId, taskDeliveredId, taskFrom, taskTo, taskDeliveryRate, diff)
-			tasks = append(tasks, SpendingTask{
+			tasks = append(tasks, EarningTask{
 				No:               i,
 				CompleteDateTime: taskCompleteDate,
 				TaskTitle:        taskTitle,

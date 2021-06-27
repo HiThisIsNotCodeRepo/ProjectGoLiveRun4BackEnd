@@ -1,4 +1,4 @@
-package my_info
+package my_info_earning
 
 import (
 	"database/sql"
@@ -16,7 +16,7 @@ from task where task_deliver_id=? AND datediff(DATE_FORMAT(task_complete, '%Y-%m
 const SQLEarningRadarSun = `select task_complete , task_id,task_category_id,task_deliver_rate ,datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),curdate())
 from task where task_deliver_id=? AND datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),curdate()) > -14`
 
-type EarningRadarResponse struct {
+type RadarResponse struct {
 	Status       string `json:"status"`
 	Msg          string `json:"msg"`
 	BuyNecessity int    `json:"buyNecessity"`
@@ -25,13 +25,9 @@ type EarningRadarResponse struct {
 	Other        int    `json:"other"`
 }
 
-func GetEarningRadar(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "*")
-	if r.Method == http.MethodOptions {
-		return
-	}
-	var getEarningRadar EarningRadarResponse
+func Radar(w http.ResponseWriter, r *http.Request) {
+
+	var getEarningRadar RadarResponse
 	var err error
 	var getAllRows *sql.Rows
 	var lastWeekFlag bool
@@ -44,7 +40,7 @@ func GetEarningRadar(w http.ResponseWriter, r *http.Request) {
 	var sendDocumentArr = make([]int, 2)
 	var otherArr = make([]int, 2)
 	var finalSQL string
-	fmt.Printf("request URI:%v\n", r.RequestURI)
+	fmt.Printf("radar->request URI:%v\n", r.RequestURI)
 	encoder := json.NewEncoder(w)
 	userID := mux.Vars(r)["userID"]
 	if strings.TrimSpace(userID) == "" {

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"gopkg.in/square/go-jose.v2"
+	"log"
 	"net/http"
 	"paotui.sg/app/jwt"
 	"time"
@@ -34,7 +35,7 @@ func TokenVerify(w http.ResponseWriter, r *http.Request) {
 
 	err = decoder.Decode(&tokenVerifyRequest)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		goto Label0
 	}
 	fmt.Printf("verifyRequest:%v\n", tokenVerifyRequest)
@@ -42,17 +43,17 @@ func TokenVerify(w http.ResponseWriter, r *http.Request) {
 	privateKey = jwt.SignKey
 	object, err = jose.ParseEncrypted(tokenVerifyRequest.Token)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		goto Label0
 	}
 	decrypted, err = object.Decrypt(privateKey)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		goto Label0
 	}
 	err = json.Unmarshal(decrypted, &userClaim)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		goto Label0
 	}
 	fmt.Printf("user Claim is %v \n", userClaim)

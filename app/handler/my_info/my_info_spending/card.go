@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"log"
 	"net/http"
 	"paotui.sg/app/db"
 	"strings"
@@ -71,14 +72,14 @@ func Card(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("card->count sql:%v\n", finalSql)
 	err = db.Db.QueryRow(finalSql, userID).Scan(&taskCount)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		goto Label0
 	}
 	baseSql = "SELECT IFNULL(sum(task_deliver_rate),0) FROM task WHERE task_owner_id =?"
 	finalSql = fmt.Sprintf("%s %s %s", baseSql, categoryFilterCondition, dateFilterCondition)
 	err = db.Db.QueryRow(finalSql, userID).Scan(&taskSpend)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		goto Label0
 	}
 	fmt.Printf("card->sum sql:%v\n", finalSql)

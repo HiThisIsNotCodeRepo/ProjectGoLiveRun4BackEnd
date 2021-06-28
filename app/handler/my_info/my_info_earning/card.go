@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"log"
 	"net/http"
 	"paotui.sg/app/db"
 	"strings"
@@ -46,7 +47,7 @@ func Card(w http.ResponseWriter, r *http.Request) {
 	getAllRows, err = db.Db.Query(SQLEarningCard, userID)
 	defer getAllRows.Close()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		goto Label0
 	}
 	if getAllRows != nil {
@@ -63,7 +64,7 @@ func Card(w http.ResponseWriter, r *http.Request) {
 			var diff int
 			err = getAllRows.Scan(&taskCompleteDate, &taskTitle, &taskCategoryId, &taskOwnerId, &taskDeliveredId, &taskFrom, &taskTo, &taskDeliveryRate, &diff)
 			if err != nil {
-				fmt.Println(err)
+				log.Println(err)
 			}
 			fmt.Printf("taskCompleteDate:%v,taskTitle:%v,taskCategoryId:%v,taskOwnerId:%v,taskDeliveredId:%v,taskFrom:%v,taskTo:%v,expense:%v,diff:%v\n", taskCompleteDate, taskTitle, taskCategoryId, taskOwnerId, taskDeliveredId, taskFrom, taskTo, taskDeliveryRate, diff)
 			if diff < 0 {

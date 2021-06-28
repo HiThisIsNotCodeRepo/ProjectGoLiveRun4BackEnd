@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"log"
 	"net/http"
 	"paotui.sg/app/db"
 	"strings"
@@ -31,11 +32,6 @@ type EarningTask struct {
 }
 
 func DataSource(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "*")
-	if r.Method == http.MethodOptions {
-		return
-	}
 	var getSpendingTaskResponse EarningDataSourceResponse
 	var err error
 	var getAllRows *sql.Rows
@@ -52,7 +48,7 @@ func DataSource(w http.ResponseWriter, r *http.Request) {
 	getAllRows, err = db.Db.Query(SQLEarningDataSource, userID)
 	defer getAllRows.Close()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		goto Label0
 	}
 	if getAllRows != nil {
@@ -69,7 +65,7 @@ func DataSource(w http.ResponseWriter, r *http.Request) {
 			var diff int
 			err = getAllRows.Scan(&taskCompleteDate, &taskTitle, &taskCategoryId, &taskOwnerId, &taskDeliveredId, &taskFrom, &taskTo, &taskDeliveryRate, &diff)
 			if err != nil {
-				fmt.Println(err)
+				log.Println(err)
 				goto Label0
 			}
 			fmt.Printf("taskCompleteDate:%v,taskTitle:%v,taskCategoryId:%v,taskOwnerId:%v,taskDeliveredId:%v,taskFrom:%v,taskTo:%v,expense:%v,diff:%v\n", taskCompleteDate, taskTitle, taskCategoryId, taskOwnerId, taskDeliveredId, taskFrom, taskTo, taskDeliveryRate, diff)

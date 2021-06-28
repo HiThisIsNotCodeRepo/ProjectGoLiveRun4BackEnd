@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"log"
 	"net/http"
 	"paotui.sg/app/db"
 	"strings"
@@ -69,7 +70,7 @@ func Summary(w http.ResponseWriter, r *http.Request) {
 	getAllRows, err = db.Db.Query(finalSQL, userID)
 	defer getAllRows.Close()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		goto Label0
 	}
 	if getAllRows != nil {
@@ -81,7 +82,7 @@ func Summary(w http.ResponseWriter, r *http.Request) {
 			var diff int
 			err = getAllRows.Scan(&taskCompleteDate, &taskId, &taskCategoryId, &taskDeliveryRate, &diff)
 			if err != nil {
-				fmt.Println(err)
+				log.Println(err)
 			}
 			fmt.Printf("taskCompleteDate:%v,taskID:%v,taskCategoryId:%v,expense:%v,diff:%v\n", taskCompleteDate, taskId, taskCategoryId, taskDeliveryRate, diff)
 			lineData[13+diff] += taskDeliveryRate

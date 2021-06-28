@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/square/go-jose.v2"
+	"log"
 	"net/http"
 	"paotui.sg/app/db"
 	"paotui.sg/app/jwt"
@@ -48,14 +49,14 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	err = decoder.Decode(&userLoginRequest)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		goto Label0
 	}
 	fmt.Printf("userLoginRequest:%v\n", userLoginRequest)
 	if strings.TrimSpace(userLoginRequest.Name) != "" && strings.TrimSpace(userLoginRequest.Password) != "" {
 		err = db.Db.QueryRow("SELECT uid, password,last_Login,email FROM user WHERE name = ?", userLoginRequest.Name).Scan(&uid, &storedPassword, &lastLogin, &email)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			goto Label0
 		}
 		if strings.TrimSpace(storedPassword) == "" || strings.TrimSpace(uid) == "" {
@@ -64,7 +65,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		}
 		err = bcrypt.CompareHashAndPassword([]byte(storedPassword), []byte(userLoginRequest.Password))
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			userLoginResponse.Status = "error"
 			userLoginResponse.Msg = "user password is not correct"
 			goto Label1

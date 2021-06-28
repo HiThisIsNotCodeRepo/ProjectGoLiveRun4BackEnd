@@ -26,7 +26,7 @@ func main() {
 	fmt.Println(token)
 	privateKey := jwt.SignKey
 	object, err = jose.ParseEncrypted(token)
-	fmt.Println(err)
+	log.Println(err)
 	decrypted, err := object.Decrypt(privateKey)
 	_ = json.Unmarshal(decrypted, &userClaim)
 

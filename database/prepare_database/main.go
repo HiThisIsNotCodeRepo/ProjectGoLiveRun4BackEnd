@@ -6,6 +6,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	uuid "github.com/satori/go.uuid"
 	"golang.org/x/crypto/bcrypt"
+	"log"
 	"math"
 	"math/rand"
 	"strings"
@@ -17,7 +18,7 @@ func main() {
 	var db *sql.DB
 	db, err = sql.Open("mysql", "user:password@tcp(:3306)/paotui?charset=utf8&parseTime=True&loc=Local")
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 	clearDB(db, err)
 	categoryInit(db, err)
@@ -27,38 +28,38 @@ func main() {
 func clearDB(db *sql.DB, err error) {
 	_, err = db.Exec("DELETE FROM category")
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 	_, err = db.Exec("DELETE FROM task")
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 	_, err = db.Exec("DELETE FROM task_bid")
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 	_, err = db.Exec("DELETE FROM user")
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 }
 func categoryInit(db *sql.DB, err error) {
 	// Category
 	_, err = db.Exec("INSERT INTO category (cid,title) VALUES(?,?)", "0", "Buy Necessity")
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 	_, err = db.Exec("INSERT INTO category (cid,title) VALUES(?,?)", "1", "Send Document")
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 	_, err = db.Exec("INSERT INTO category (cid,title) VALUES(?,?)", "2", "Food Delivery")
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 	_, err = db.Exec("INSERT INTO category (cid,title) VALUES(?,?)", "3", "Other")
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 }
 func userInit(db *sql.DB, err error) {
@@ -69,7 +70,7 @@ func userInit(db *sql.DB, err error) {
 		name := fmt.Sprintf("user%d", i)
 		hash, err = bcrypt.GenerateFromPassword([]byte(fmt.Sprintf("user%d", i)), bcrypt.DefaultCost)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 		password := string(hash)
 		email := fmt.Sprintf("user%d@email.com", i)
@@ -77,7 +78,7 @@ func userInit(db *sql.DB, err error) {
 		lastLogin := time.Now().Add(time.Hour * time.Duration(-i))
 		_, err = db.Exec("INSERT INTO user (uid,name,password,email,mobile_number,last_login) VALUES(?,?,?,?,?,?)", uid, name, password, email, mobileNumber, lastLogin)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 	}
 }
@@ -111,7 +112,7 @@ func taskInit(db *sql.DB, err error) {
 			var user User
 			err = getAllUidRow.Scan(&user.uid, &user.name)
 			if err != nil {
-				fmt.Println(err)
+				log.Println(err)
 			}
 			*userArr = append(*userArr, user)
 
@@ -128,7 +129,7 @@ func taskInit(db *sql.DB, err error) {
 			var category Category
 			err = getAllCategoryRow.Scan(&category.cid, &category.title)
 			if err != nil {
-				fmt.Println(err)
+				log.Println(err)
 			}
 			*categoryArr = append(*categoryArr, category)
 
@@ -183,7 +184,7 @@ func taskInit(db *sql.DB, err error) {
 				fmt.Printf("task_id:%v\ntask_title:%v\ntask_description:%v\ntask_category_id:%v\ntask_from:%v\ntask_to:%v\ntask_create:%v\ntask_start:%v\ntask_complete:%v\ntask_duration:%v\ntask_step:%v\ntask_ownder_id:%v\ntask_owner_rate:%v\ntask_deliver_id:%v\ntask_deliver_rate:%v\n", taskId, taskTitle, taskDescription, randIndexForCategory, fromLocation, toLocation, createTime, startTime, completeTime, duration, taskStep, v.uid, ownerRate, taskDeliverId, deliverRate)
 				_, err = db.Exec("INSERT INTO task (task_id,task_title,task_description,task_category_id,task_from,task_to,task_create,task_start,task_complete,task_duration,task_step,task_owner_id,task_owner_rate,task_deliver_id,task_deliver_rate) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", taskId, taskTitle, taskDescription, randIndexForCategory, fromLocation, toLocation, createTime, startTime, completeTime, duration, taskStep, v.uid, ownerRate, taskDeliverId, deliverRate)
 				if err != nil {
-					fmt.Println(err)
+					log.Println(err)
 				}
 			}
 

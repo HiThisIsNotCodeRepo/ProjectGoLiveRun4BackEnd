@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-const SQLOngoingNewTask = `select 
+const SQLOngoingNewTaskIdentityUser = `select 
 task_id,
 task_title,
 task_description,
@@ -33,7 +33,25 @@ const SQLOngoingNewTaskBidder = ` select task_bidder_id,task_bidder_rate from ta
 
 const OnlyMeFilterCondition = ` AND task_owner_id=? `
 const ExcludeMeFilterCondition = ` AND task_owner_id<>? `
-const OnGoingFilterCondition = ` AND task_step = 0 order by task_start`
+const OnGoingFilterCondition = ` AND task_step = 0 OR task_step = 1 order by task_start`
+
+const SQLOngoingNewTaskIdentityTask = `select 
+task_id,
+task_title,
+task_description,
+task_category_id,
+task_from,
+task_to,
+task_create,
+task_start,
+IFNULL(task_complete,''),
+task_duration,
+task_step,
+task_owner_id,
+task_owner_rate,
+IFNULL(task_deliver_id,''),
+IFNULL(task_deliver_rate,0) 
+from task where task_id = ? `
 
 type TaskResponse struct {
 	Status string `json:"status"`
@@ -79,16 +97,18 @@ func TaskEnquiry(w http.ResponseWriter, r *http.Request) {
 	var option string
 	var category string
 	var finalSql string
+	var identity string
 	fmt.Printf("task enquiry->request URI:%v\n", r.RequestURI)
 	tasks := make([]Task, 0)
 	bidders := make([]Bidder, 0)
 	encoder := json.NewEncoder(w)
-	userID := mux.Vars(r)["userID"]
+	id := mux.Vars(r)["id"]
 	option = r.URL.Query().Get("option")
 	category = r.URL.Query().Get("category")
-	if strings.TrimSpace(userID) == "" {
+	identity = r.URL.Query().Get("identity")
+	if strings.TrimSpace(id) == "" {
 		taskEqnuiryResponse.Status = "error"
-		taskEqnuiryResponse.Msg = "no userID"
+		taskEqnuiryResponse.Msg = "no id"
 		goto Label1
 	}
 	if strings.TrimSpace(option) == "" {
@@ -96,13 +116,24 @@ func TaskEnquiry(w http.ResponseWriter, r *http.Request) {
 		taskEqnuiryResponse.Msg = "no status"
 		goto Label1
 	}
-	fmt.Printf("userID:%v,option:%v,category:%v\n", userID, option, category)
-	if option == "on-going" && category == "only-me" {
-		finalSql = fmt.Sprintf("%s%s%s", SQLOngoingNewTask, OnlyMeFilterCondition, OnGoingFilterCondition)
-	} else if option == "on-going" && category == "exclude-me" {
-		finalSql = fmt.Sprintf("%s%s%s", SQLOngoingNewTask, ExcludeMeFilterCondition, OnGoingFilterCondition)
+	if strings.TrimSpace(identity) == "" {
+		taskEqnuiryResponse.Status = "error"
+		taskEqnuiryResponse.Msg = "no identity"
+		goto Label1
 	}
-	getAllRowsForTask, err = db.Db.Query(finalSql, userID)
+	fmt.Printf("id:%v,option:%v,category:%v,identity:%v\n", id, option, category, identity)
+
+	if identity == "user" {
+		if option == "on-going" && category == "only-me" {
+			finalSql = fmt.Sprintf("%s%s%s", SQLOngoingNewTaskIdentityUser, OnlyMeFilterCondition, OnGoingFilterCondition)
+
+		} else if option == "on-going" && category == "exclude-me" {
+			finalSql = fmt.Sprintf("%s%s%s", SQLOngoingNewTaskIdentityUser, ExcludeMeFilterCondition, OnGoingFilterCondition)
+		}
+	} else if identity == "task" {
+		finalSql = SQLOngoingNewTaskIdentityTask
+	}
+	getAllRowsForTask, err = db.Db.Query(finalSql, id)
 	defer getAllRowsForTask.Close()
 	if err != nil {
 		log.Println(err)

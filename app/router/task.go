@@ -9,6 +9,6 @@ import (
 
 func Task(s *mux.Router) *mux.Router {
 	s.HandleFunc("/tasks/task", tasks.NewTask).Methods(http.MethodPost, http.MethodOptions)
-	s.HandleFunc("/tasks/{userID}", tasks_enquiry.TaskEnquiry).Methods(http.MethodGet, http.MethodOptions)
+	s.HandleFunc("/tasks/{id}", tasks_enquiry.TaskEnquiry).Methods(http.MethodGet, http.MethodOptions)
 	return s
 }

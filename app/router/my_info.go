@@ -8,7 +8,7 @@ import (
 )
 
 func MyInfo(s *mux.Router) *mux.Router {
-	s.HandleFunc("/earning/{userID}", my_info_earning.Earning).Methods(http.MethodGet, http.MethodOptions)
-	s.HandleFunc("/spending/{userID}", my_info_spending.Spending).Methods(http.MethodGet, http.MethodOptions)
+	s.HandleFunc("/earning/{userID}", my_info_earning.Earning).Methods(http.MethodGet)
+	s.HandleFunc("/spending/{userID}", my_info_spending.Spending).Methods(http.MethodGet)
 	return s
 }

@@ -7,6 +7,6 @@ import (
 )
 
 func Category(s *mux.Router) *mux.Router {
-	s.HandleFunc("/categories", category.Categories).Methods(http.MethodGet, http.MethodOptions)
+	s.HandleFunc("/categories", category.Categories).Methods(http.MethodGet)
 	return s
 }

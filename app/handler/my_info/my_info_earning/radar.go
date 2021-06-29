@@ -44,15 +44,16 @@ func Radar(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("radar->request URI:%v\n", r.RequestURI)
 	encoder := json.NewEncoder(w)
 	userID := mux.Vars(r)["userID"]
+	date := r.URL.Query().Get("date")
 	if strings.TrimSpace(userID) == "" {
 		getEarningRadar.Status = "error"
 		getEarningRadar.Msg = "no userID"
 		goto Label1
 	}
 
-	if strings.Contains(r.RequestURI, "last-week") {
+	if date == "last-week" {
 		lastWeekFlag = true
-	} else if strings.Contains(r.RequestURI, "this-week") {
+	} else if date == "this-week" {
 		lastWeekFlag = false
 	} else {
 		goto Label0

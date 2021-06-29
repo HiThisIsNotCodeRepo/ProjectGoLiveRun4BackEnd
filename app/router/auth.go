@@ -7,6 +7,6 @@ import (
 )
 
 func Auth(s *mux.Router) *mux.Router {
-	s.HandleFunc("/auth", auth.Auth).Methods(http.MethodPost, http.MethodGet, http.MethodOptions)
+	s.HandleFunc("/auth", auth.Auth).Methods(http.MethodPost, http.MethodOptions)
 	return s
 }

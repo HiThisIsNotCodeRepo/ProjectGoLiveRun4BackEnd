@@ -1,5 +1,5 @@
 drop database if exists paotui;
-CREATE DATABASE paotui DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE paotui;
 use paotui;
 drop table if exists user;
 CREATE TABLE user
@@ -10,7 +10,6 @@ CREATE TABLE user
     email VARCHAR(40) COMMENT 'user email address',
     mobile_number INT UNSIGNED COMMENT 'user mobile number',
     last_login DATETIME COMMENT 'user last login datetime',
-    user_delete TINYINT UNSIGNED COMMENT 'logical bit represent delete status',
     PRIMARY KEY (uid)
 );
 drop table if exists task;
@@ -31,7 +30,6 @@ CREATE TABLE task
     task_owner_rate SMALLINT UNSIGNED COMMENT 'task owner expected rate 0~65535 required',
     task_deliver_id VARCHAR(36) COMMENT 'task deliver user id UUID',
     task_deliver_rate SMALLINT UNSIGNED COMMENT 'task deliver rate, final rate 0~65535',
-    task_delete TINYINT UNSIGNED COMMENT 'logical bit represent delete status',
     PRIMARY KEY (task_id)
 );
 CREATE TABLE task_bid

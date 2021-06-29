@@ -12,7 +12,7 @@ import (
 )
 
 const SQLSpendingDataSource = `select task_complete ,task_title,task_category_id,task_owner_id,task_deliver_id ,task_from,task_to,task_deliver_rate,datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),curdate()) from task
-where task_owner_id=? AND datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),curdate()) > -30 order by task_complete`
+where task_owner_id=?  AND task_step = 2 AND datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),curdate()) > -30 order by task_complete desc`
 
 type DataSourceResponse struct {
 	Status string         `json:"status"`

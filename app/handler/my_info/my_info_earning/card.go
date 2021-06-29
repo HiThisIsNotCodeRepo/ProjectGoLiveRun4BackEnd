@@ -12,7 +12,7 @@ import (
 )
 
 const SQLEarningCard = `select task_complete ,task_title,task_category_id,task_owner_id,task_deliver_id ,task_from,task_to,task_deliver_rate,datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),DATE_FORMAT(curdate(), '%Y-%m-%d')) from task
-where task_deliver_id=? AND datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),DATE_FORMAT(curdate(), '%Y-%m-%d')) > -11 order by task_complete DESC`
+where task_deliver_id=?  AND task_step = 2 AND datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),DATE_FORMAT(curdate(), '%Y-%m-%d')) > -11 order by task_complete DESC`
 
 type CardResponse struct {
 	Status            string `json:"status"`

@@ -13,9 +13,9 @@ import (
 )
 
 const SQLEarningRadarNonSun = `select task_complete , task_id,task_category_id,task_deliver_rate ,datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),subdate(curdate(),date_format(curdate(),'%w')-7)) 
-from task where task_deliver_id=? AND datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),subdate(curdate(),date_format(curdate(),'%w')-7)) > -14`
+from task where task_deliver_id=? AND task_step = 2 AND datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),subdate(curdate(),date_format(curdate(),'%w')-7)) > -14`
 const SQLEarningRadarSun = `select task_complete , task_id,task_category_id,task_deliver_rate ,datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),curdate())
-from task where task_deliver_id=? AND datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),curdate()) > -14`
+from task where task_deliver_id=? AND task_step = 2 AND datediff(DATE_FORMAT(task_complete, '%Y-%m-%d'),curdate()) > -14`
 
 type RadarResponse struct {
 	Status       string `json:"status"`

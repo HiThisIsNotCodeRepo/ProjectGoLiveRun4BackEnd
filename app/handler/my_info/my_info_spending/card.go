@@ -67,7 +67,7 @@ func Card(w http.ResponseWriter, r *http.Request) {
 	} else {
 		goto Label0
 	}
-	baseSql = "SELECT count(*) FROM task WHERE task_owner_id = ?"
+	baseSql = "SELECT count(*) FROM task WHERE task_owner_id = ? AND task_step = 2"
 	finalSql = fmt.Sprintf("%s %s %s", baseSql, categoryFilterCondition, dateFilterCondition)
 	fmt.Printf("card->count sql:%v\n", finalSql)
 	err = db.Db.QueryRow(finalSql, userID).Scan(&taskCount)

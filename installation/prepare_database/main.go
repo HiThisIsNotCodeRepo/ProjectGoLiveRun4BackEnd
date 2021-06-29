@@ -135,20 +135,18 @@ func taskInit(db *sql.DB, err error) {
 
 		}
 	}
-	//currentDayOfWeek := int(time.Now().Weekday())
 	rand.Seed(time.Now().UnixNano())
 	newTime := time.Now()
 	randNum := rand.Intn(5)
 	if time.Now().Hour() < 14 {
-
 		newTime = time.Now().Add(time.Hour * (time.Duration(14 + randNum - time.Now().Hour())))
 	} else {
 		newTime = time.Now().Add(-time.Hour * (time.Duration(time.Now().Hour() - 14 + randNum)))
 	}
-	//for i := -(currentDayOfWeek + 6); i < 0; i++ {
 	for i := -14; i < 0; i++ {
 		tempTime := newTime.AddDate(0, 0, i)
 		for _, v := range *userArr {
+			//v := (*userArr)[0]
 			for j := 0; j < 5; j++ {
 				tempUidArr := new([]string)
 				for _, tempUser := range *userArr {

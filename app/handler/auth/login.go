@@ -89,6 +89,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		}
 		_, err = db.Db.Exec("UPDATE user SET last_login =? WHERE uid =? ", time.Now(), uid)
 		if err != nil {
+			log.Println(err)
 			goto Label0
 		}
 		fmt.Printf("token:%v\n", token)

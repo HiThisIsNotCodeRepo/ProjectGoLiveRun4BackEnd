@@ -32,7 +32,7 @@ from task where 1=1 `
 const SQLOngoingNewTaskBidder = ` select task_bidder_id,task_bidder_rate from task_bid where task_id = ? `
 
 const OnlyMeFilterCondition = ` AND task_owner_id=? `
-const ExcludeMeFilterCondition = ` AND task_owner_id<>? `
+const ExcludeMeFilterCondition = ` AND task_owner_id<> ? `
 const OnGoingFilterCondition = ` AND task_step = 0 OR task_step = 1 order by task_start`
 
 const SQLOngoingNewTaskIdentityTask = `select 
@@ -100,7 +100,7 @@ func TaskEnquiry(w http.ResponseWriter, r *http.Request) {
 	var identity string
 	fmt.Printf("task enquiry->request URI:%v\n", r.RequestURI)
 	tasks := make([]Task, 0)
-	bidders := make([]Bidder, 0)
+
 	encoder := json.NewEncoder(w)
 	id := mux.Vars(r)["id"]
 	option = r.URL.Query().Get("option")
@@ -163,32 +163,14 @@ func TaskEnquiry(w http.ResponseWriter, r *http.Request) {
 				log.Println(err)
 				goto Label0
 			}
-			fmt.Printf("taskId:%v,taskTitle:%v,taskDescription:%v,taskCategoryId:%v,taskFrom:%v,taskTo:%v,taskCreate:%v,taskStart:%v,taskComplete:%v,taskDuration:%v,taskStep:%v,taskOwnerId:%v,taskOwnerRate:%v,deliverId:%v,deliverRate:%v\n", taskId, taskTitle, taskDescription, taskCategoryId, taskFrom, taskTo, taskCreate, taskStart, taskComplete, taskDuration, taskStep, taskOwnerId, taskOwnerRate, deliverId, deliverRate)
+			//fmt.Printf("taskId:%v,taskTitle:%v,taskDescription:%v,taskCategoryId:%v,taskFrom:%v,taskTo:%v,taskCreate:%v,taskStart:%v,taskComplete:%v,taskDuration:%v,taskStep:%v,taskOwnerId:%v,taskOwnerRate:%v,deliverId:%v,deliverRate:%v\n", taskId, taskTitle, taskDescription, taskCategoryId, taskFrom, taskTo, taskCreate, taskStart, taskComplete, taskDuration, taskStep, taskOwnerId, taskOwnerRate, deliverId, deliverRate)
+			fmt.Printf("->check bidder for %v\n", taskId)
 			getAllRowsForBidder, err = db.Db.Query(SQLOngoingNewTaskBidder, taskId)
 			if err != nil {
 				log.Println(err)
 				goto Label0
 			}
-
-			tasks = append(tasks, Task{
-				No:              i,
-				TaskId:          taskId,
-				TaskTitle:       taskTitle,
-				TaskDescription: taskDescription,
-				TaskCategoryId:  taskCategoryId,
-				TaskFrom:        taskFrom,
-				TaskTo:          taskTo,
-				TaskCreate:      taskCreate,
-				TaskStart:       taskStart,
-				TaskComplete:    taskComplete,
-				TaskDuration:    taskDuration,
-				TaskStep:        taskStep,
-				TaskOwnerId:     taskOwnerId,
-				TaskOwnerRate:   taskOwnerRate,
-				TaskDeliverId:   deliverId,
-				TaskDeliverRate: deliverRate,
-			})
-
+			bidders := make([]Bidder, 0)
 			if getAllRowsForBidder != nil {
 				j := 1
 				for getAllRowsForBidder.Next() {
@@ -210,11 +192,30 @@ func TaskEnquiry(w http.ResponseWriter, r *http.Request) {
 				if j == 1 {
 					fmt.Printf("no bidder for option:%v,category:%v\n", option, category)
 				} else {
-					tasks[i].Bidders = bidders
+					//tasks[i-1].Bidders = bidders
 				}
 			} else {
 				fmt.Printf("no bidder for option:%v,category:%v\n", option, category)
 			}
+			tasks = append(tasks, Task{
+				No:              i,
+				TaskId:          taskId,
+				TaskTitle:       taskTitle,
+				TaskDescription: taskDescription,
+				TaskCategoryId:  taskCategoryId,
+				TaskFrom:        taskFrom,
+				TaskTo:          taskTo,
+				TaskCreate:      taskCreate,
+				TaskStart:       taskStart,
+				TaskComplete:    taskComplete,
+				TaskDuration:    taskDuration,
+				TaskStep:        taskStep,
+				TaskOwnerId:     taskOwnerId,
+				TaskOwnerRate:   taskOwnerRate,
+				TaskDeliverId:   deliverId,
+				TaskDeliverRate: deliverRate,
+				Bidders:         bidders,
+			})
 			i++
 		}
 		if i == 1 {

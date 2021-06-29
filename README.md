@@ -30,7 +30,7 @@ penalty.
 The sql file can be found [here](https://github.com/qinchenfeng/ProjectGoLiveRun4BackEnd/blob/master/doc/sql/mysql.sql).
 
 ## Installation Manual
-
+[The source code installation manual](https://github.com/qinchenfeng/ProjectGoLiveRun4BackEnd/blob/master/installation/README.md)
 
 ## Authrorisation with token
 

@@ -2,19 +2,53 @@
 
 ## Project Title: Pao Tui(跑腿)
 
-**Back End API**
 > Author: Qin Chenfeng
 >
 > Email:freddy.qin@gmail.com
 
 ## Project Description
 
-Due to Covid 19, an ad hoc job posting platform has emerged to provide more job opportunities, anyone can post their
-urgent task with personalised requirements ,for instance deliver food, buy necessity, send documents etc, it also needs
-to include max acceptable rate and expected delivery time. Anyone who is interested in making pocket money can bid for
-the job with their minimum acceptable rate and finish time. Among those service providers, job posters should pick one.
-Once a job is assigned, the service provider should do their best to complete the task before the deadline to avoid any
-penalty.
+Due to Covid 19, an ad hoc job posting platform has emerged to provide more job opportunities, anyone can post their urgent task with personalised requirements ,for instance deliver food, buy necessity, send documents etc, it also needs to include max acceptable rate and expected delivery time. Anyone who is interested in making pocket money can bid for the job with their minimum acceptable rate and finish time. Among those service providers, job posters should pick one.
+Once a job is assigned, the service provider should do their best to complete the task before the deadline to avoid any penalty.
+## Git Repository
+- [Front End](https://github.com/qinchenfeng/ProjectGoLiveRun4FrontEnd)
+- [Back End](https://github.com/qinchenfeng/ProjectGoLiveRun4BackEnd)
+## Installation Menu
+- [Front End](https://github.com/qinchenfeng/ProjectGoLiveRun4FrontEnd#installation-guide)
+- [Back End](https://github.com/qinchenfeng/ProjectGoLiveRun4BackEnd#installation-manual)
+## Demo Gif
+- [Demo](https://github.com/qinchenfeng/ProjectGoLiveRun4FrontEnd#demo)
+## Project Layout
+![layout](https://i.imgur.com/NNINJHs.png)
+## Development Environment
+### Front End
+- [Angular](https://angular.io/)
+- [Angular Material](https://material.angular.io/)
+- [Fuse](http://angular-material.fusetheme.com/sign-in?redirectURL=%2Fdashboards%2Fproject%3Fv12.0.0%3D)
+### Back End
+- [Go](https://golang.org/)
+- [go-sql-driver](https://github.com/go-sql-driver/mysql)
+- [gorilla/mux](https://github.com/gorilla/mux)
+### Database
+Docker + MySQL 8.0
+### Core Feature In The Application
+1. User Log-in/Log-out/Sign-up.
+2. Task Add/Remove/Edit(Task Owner Rate Only)/Enquiry
+3. Personal data chart display.
+4. HTTP Communication Between Front-end and Back-end
+5. Single Page Application
+## REST API
+|No| Module  | Method|Request Data|API URL|Query Key|
+|---|---|---|---|---|---|
+|1|Auth|Post,Options|Yes|/api/v1/auth|option{login,token-verify}|
+|2|Category|Get|No|/api/v1/categories|
+|3|My Info|Get|No|/api/v1/spending/{userID}|chart-type{card,summary,datasource},date{yesterday,two-days-ago,three-days-ago},category{buy-necessity,food-delivery,send-document,other},date{last-week,this-week}|
+|4|My Info|Get|No|/api/v1/earning/{userID}|chart-type{card,radar,datasource},date{last-week,this-week}|
+|5|Task|Post,Options|Yes|/api/v1/tasks/task||
+|6|Task|Get|No|/api/v1/tasks/{id}|identity{user,task},options{on-going},category{only-me,exclude-me}|
+|7|Task|Put,Delete,Option|Yes|/api/v1/tasks/task/{taskID}|option{confirm-task-deliver,update-expected-rate,delete}|
+|8|Task Bid|Post,Option|Yes|/api/v1/tasks/bid|
+
 
 ## Database Design Consideration
 
@@ -27,8 +61,6 @@ penalty.
 4. To minimise the space occupation, some field has been set with unsigned number, for instance the mobile number I set
    it to `INT UNSIGNED` it can provide 0~4_294_967_295 10 digits while it's 4 bytes.
 
-The sql file can be found [here](https://github.com/qinchenfeng/ProjectGoLiveRun4BackEnd/blob/master/doc/sql/mysql.sql).
-
 ## Installation Manual
 [The source code installation manual](https://github.com/qinchenfeng/ProjectGoLiveRun4BackEnd/blob/master/installation/README.md)
 
@@ -38,18 +70,7 @@ The main strategy is to encrypt a piece of text hold user info and expire time. 
 restricted website it needs to send token for verification. Here I verified if username in url and token is the same and
 token has expired or not.
 
-## REST API
 
-|No| Module  | Method|Request Data|API URL|Query Key|
-|---|---|---|---|---|---|
-|1|Auth|Post,Options|Yes|/api/v1/auth|option{login,token-verify}|
-|2|Category|Get|No|/api/v1/categories|
-|3|My Info|Get|No|/api/v1/spending/{userID}|chart-type{card,summary,datasource},date{yesterday,two-days-ago,three-days-ago},category{buy-necessity,food-delivery,send-document,other},date{last-week,this-week}|
-|4|My Info|Get|No|/api/v1/earning/{userID}|chart-type{card,radar,datasource},date{last-week,this-week}|
-|5|Task|Post,Options|Yes|/api/v1/tasks/task||
-|6|Task|Get|No|/api/v1/tasks/{id}|identity{user,task},options{on-going},category{only-me,exclude-me}|
-|7|Task|Put,Delete,Option|Yes|/api/v1/tasks/task/{taskID}|option{confirm-task-deliver,update-expected-rate,delete}|
-|8|Task Bid|Post,Option|Yes|/api/v1/tasks/bid|
 
 ## mySQL connection time issue
 

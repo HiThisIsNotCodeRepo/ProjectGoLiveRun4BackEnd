@@ -43,8 +43,8 @@ func Radar(w http.ResponseWriter, r *http.Request) {
 	var finalSQL string
 	fmt.Printf("radar->request URI:%v\n", r.RequestURI)
 	encoder := json.NewEncoder(w)
-	userID := mux.Vars(r)["userID"]
-	date := r.URL.Query().Get("date")
+	userID := strings.TrimSpace(mux.Vars(r)["userID"])
+	date := strings.TrimSpace(r.URL.Query().Get("date"))
 	if strings.TrimSpace(userID) == "" {
 		getEarningRadar.Status = "error"
 		getEarningRadar.Msg = "no userID"

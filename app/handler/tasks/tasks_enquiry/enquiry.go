@@ -103,9 +103,9 @@ func TaskEnquiry(w http.ResponseWriter, r *http.Request) {
 
 	encoder := json.NewEncoder(w)
 	id := mux.Vars(r)["id"]
-	option = r.URL.Query().Get("option")
-	category = r.URL.Query().Get("category")
-	identity = r.URL.Query().Get("identity")
+	option = strings.TrimSpace(r.URL.Query().Get("option"))
+	category = strings.TrimSpace(r.URL.Query().Get("category"))
+	identity = strings.TrimSpace(r.URL.Query().Get("identity"))
 	if strings.TrimSpace(id) == "" {
 		taskEqnuiryResponse.Status = "error"
 		taskEqnuiryResponse.Msg = "no id"

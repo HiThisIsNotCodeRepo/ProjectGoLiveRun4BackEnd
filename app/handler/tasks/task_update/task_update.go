@@ -1,6 +1,9 @@
 package task_update
 
-import "net/http"
+import (
+	"net/http"
+	"strings"
+)
 
 func TaskUpdate(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -8,7 +11,7 @@ func TaskUpdate(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodOptions {
 		return
 	}
-	option := r.URL.Query().Get("option")
+	option := strings.TrimSpace(r.URL.Query().Get("option"))
 	if option == "confirm-task-deliver" {
 		ConfirmTaskDeliver(w, r)
 	} else if option == "update-expected-rate" {

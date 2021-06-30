@@ -38,7 +38,7 @@ func DataSource(w http.ResponseWriter, r *http.Request) {
 	tasks := make([]EarningTask, 0)
 	fmt.Printf("datasource->request URI:%v\n", r.RequestURI)
 	encoder := json.NewEncoder(w)
-	userID := mux.Vars(r)["userID"]
+	userID := strings.TrimSpace(mux.Vars(r)["userID"])
 	if strings.TrimSpace(userID) == "" {
 		getSpendingTaskResponse.Status = "error"
 		getSpendingTaskResponse.Msg = "no userID"

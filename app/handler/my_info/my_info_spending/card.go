@@ -35,9 +35,9 @@ func Card(w http.ResponseWriter, r *http.Request) {
 	var categoryFilterCondition string
 	var dateFilterCondition string
 	encoder := json.NewEncoder(w)
-	userID := mux.Vars(r)["userID"]
-	date := r.URL.Query().Get("date")
-	category := r.URL.Query().Get("category")
+	userID := strings.TrimSpace(mux.Vars(r)["userID"])
+	date := strings.TrimSpace(r.URL.Query().Get("date"))
+	category := strings.TrimSpace(r.URL.Query().Get("category"))
 	fmt.Printf("card->request URI:%v\n", r.RequestURI)
 	fmt.Printf("card->userID:%v,date:%v,category:%v\n", userID, date, category)
 	if strings.TrimSpace(userID) == "" {

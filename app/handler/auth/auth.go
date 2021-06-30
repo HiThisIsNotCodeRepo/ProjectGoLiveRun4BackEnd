@@ -1,6 +1,9 @@
 package auth
 
-import "net/http"
+import (
+	"net/http"
+	"strings"
+)
 
 func Auth(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -8,7 +11,7 @@ func Auth(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodOptions {
 		return
 	}
-	chartType := r.URL.Query().Get("option")
+	chartType := strings.TrimSpace(r.URL.Query().Get("option"))
 	if chartType == "login" {
 		Login(w, r)
 	} else if chartType == "token-verify" {

@@ -37,7 +37,7 @@ func Card(w http.ResponseWriter, r *http.Request) {
 	var pastTenDaysTotal int
 	fmt.Printf("card->request URI:%v\n", r.RequestURI)
 	encoder := json.NewEncoder(w)
-	userID := mux.Vars(r)["userID"]
+	userID := strings.TrimSpace(mux.Vars(r)["userID"])
 	if strings.TrimSpace(userID) == "" {
 		getEarningCardResponse.Status = "error"
 		getEarningCardResponse.Msg = "no userID"

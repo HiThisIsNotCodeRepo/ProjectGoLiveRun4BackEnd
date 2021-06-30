@@ -45,8 +45,8 @@ func Summary(w http.ResponseWriter, r *http.Request) {
 	sendDocumentCategoryCount := make([]int, 2)
 	otherCategoryCount := make([]int, 2)
 	encoder := json.NewEncoder(w)
-	userID := mux.Vars(r)["userID"]
-	date := r.URL.Query().Get("date")
+	userID := strings.TrimSpace(mux.Vars(r)["userID"])
+	date := strings.TrimSpace(r.URL.Query().Get("date"))
 	fmt.Printf("summary->URI:%v\n", r.RequestURI)
 	fmt.Printf("summary->userID:%v,date:%v\n", userID, date)
 	if strings.TrimSpace(userID) == "" {

@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"paotui.sg/app/db"
+	"paotui.sg/app/handler/error_util"
 	"strings"
 )
 
@@ -32,6 +33,7 @@ type SpendingTask struct {
 }
 
 func DataSource(w http.ResponseWriter, r *http.Request) {
+	defer error_util.ErrorHandle(w)
 	var getSpendingTaskResponse DataSourceResponse
 	var err error
 	var getAllRows *sql.Rows
@@ -93,8 +95,7 @@ Label0:
 Label1:
 	encodeErr := encoder.Encode(getSpendingTaskResponse)
 	if encodeErr != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
+w.WriteHeader(http.StatusInternalServerError)
 	}
 }
 func getLast4Char(str string) string {

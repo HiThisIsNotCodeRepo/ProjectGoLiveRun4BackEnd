@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"paotui.sg/app/db"
+	"paotui.sg/app/handler/error_util"
 	"strings"
 )
 
@@ -26,6 +27,7 @@ type CardResponse struct {
 }
 
 func Card(w http.ResponseWriter, r *http.Request) {
+	defer error_util.ErrorHandle(w)
 	var getEarningCardResponse CardResponse
 	var err error
 	var getAllRows *sql.Rows
@@ -45,7 +47,12 @@ func Card(w http.ResponseWriter, r *http.Request) {
 	}
 
 	getAllRows, err = db.Db.Query(SQLEarningCard, userID)
-	defer getAllRows.Close()
+	defer func() {
+		if getAllRows != nil {
+			err = getAllRows.Close()
+			log.Println(err)
+		}
+	}()
 	if err != nil {
 		log.Println(err)
 		goto Label0
@@ -106,6 +113,5 @@ Label1:
 	encodeErr := encoder.Encode(getEarningCardResponse)
 	if encodeErr != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		return
 	}
 }

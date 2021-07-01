@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"paotui.sg/app/db"
+	"paotui.sg/app/handler/error_util"
 	"strings"
 	"time"
 )
@@ -24,6 +25,7 @@ type RegisterResponse struct {
 }
 
 func Register(w http.ResponseWriter, r *http.Request) {
+	defer error_util.ErrorHandle(w)
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "*")
 	var registerRequest = RegisterRequest{}
@@ -88,6 +90,5 @@ Label1:
 	encodeErr := encoder.Encode(registerResponse)
 	if encodeErr != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		return
 	}
 }

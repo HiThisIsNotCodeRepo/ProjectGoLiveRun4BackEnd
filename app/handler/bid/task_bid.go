@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"paotui.sg/app/db"
+	"paotui.sg/app/handler/error_util"
 	"strings"
 )
 
@@ -21,6 +22,7 @@ type NewBidResponse struct {
 }
 
 func TaskBid(w http.ResponseWriter, r *http.Request) {
+	defer error_util.ErrorHandle(w)
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "*")
 	if r.Method == http.MethodOptions {
@@ -61,6 +63,5 @@ Label1:
 	encodeErr := encoder.Encode(newBidResponse)
 	if encodeErr != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		return
 	}
 }

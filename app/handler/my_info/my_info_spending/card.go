@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"paotui.sg/app/db"
+	"paotui.sg/app/handler/error_util"
 	"strings"
 )
 
@@ -26,6 +27,7 @@ type CardResponse struct {
 }
 
 func Card(w http.ResponseWriter, r *http.Request) {
+	defer error_util.ErrorHandle(w)
 	var baseSql string
 	var finalSql string
 	var getCardResponse CardResponse
@@ -96,7 +98,6 @@ Label0:
 Label1:
 	encodeErr := encoder.Encode(getCardResponse)
 	if encodeErr != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
+w.WriteHeader(http.StatusInternalServerError)
 	}
 }

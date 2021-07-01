@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"paotui.sg/app/db"
+	"paotui.sg/app/handler/error_util"
 	"strings"
 	"time"
 )
@@ -31,6 +32,7 @@ type SummaryResponse struct {
 }
 
 func Summary(w http.ResponseWriter, r *http.Request) {
+	defer error_util.ErrorHandle(w)
 	var getSummaryResponse SummaryResponse
 	var err error
 	var getAllRows *sql.Rows
@@ -147,6 +149,5 @@ Label1:
 	encodeErr := encoder.Encode(getSummaryResponse)
 	if encodeErr != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		return
 	}
 }

@@ -17,12 +17,6 @@ func init() {
 	db.SetMaxOpenConns(10)
 	db.SetMaxIdleConns(10)
 	Db = db
-	go cleanDatabase()
+	go cleanExpireTask()
 }
 
-func cleanDatabase() {
-	for {
-		time.Sleep(time.Second)
-		//fmt.Println("clean database")
-	}
-}

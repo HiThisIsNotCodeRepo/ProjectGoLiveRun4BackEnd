@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"paotui.sg/app/db"
+	"paotui.sg/app/handler/error_util"
 )
 
 type CategoriesResponse struct {
@@ -20,6 +21,7 @@ type Category struct {
 }
 
 func Categories(w http.ResponseWriter, r *http.Request) {
+	defer error_util.ErrorHandle(w)
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "*")
 	if r.Method == http.MethodOptions {
@@ -70,6 +72,5 @@ Label0:
 	encodeErr := encoder.Encode(getCategoriesResponse)
 	if encodeErr != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		return
 	}
 }

@@ -7,6 +7,7 @@ import (
 	"gopkg.in/square/go-jose.v2"
 	"log"
 	"net/http"
+	"paotui.sg/app/handler/error_util"
 	"paotui.sg/app/jwt"
 	"time"
 )
@@ -22,6 +23,7 @@ type TokenVerifyResponse struct {
 }
 
 func TokenVerify(w http.ResponseWriter, r *http.Request) {
+	defer error_util.ErrorHandle(w)
 	var tokenVerifyRequest TokenVerifyRequest
 	var tokenVerifyResponse TokenVerifyResponse
 	var err error
@@ -79,6 +81,5 @@ Label1:
 	encodeErr := encoder.Encode(tokenVerifyResponse)
 	if encodeErr != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		return
 	}
 }

@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"paotui.sg/app/db"
+	"paotui.sg/app/handler/error_util"
 	"paotui.sg/app/jwt"
 	"strings"
 	"time"
@@ -33,6 +34,7 @@ type UserLoginResponse struct {
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
+	defer error_util.ErrorHandle(w)
 	var userLoginRequest = UserLoginRequest{}
 	var userLoginResponse UserLoginResponse
 	var storedPassword string
@@ -114,6 +116,5 @@ Label1:
 	encodeErr := encoder.Encode(userLoginResponse)
 	if encodeErr != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		return
 	}
 }

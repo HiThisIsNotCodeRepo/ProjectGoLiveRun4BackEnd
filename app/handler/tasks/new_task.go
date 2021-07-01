@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"paotui.sg/app/db"
+	"paotui.sg/app/handler/error_util"
 	"strings"
 	"time"
 )
@@ -29,6 +30,7 @@ type NewTaskResponse struct {
 }
 
 func NewTask(w http.ResponseWriter, r *http.Request) {
+	defer error_util.ErrorHandle(w)
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "*")
 	if r.Method == http.MethodOptions {
@@ -81,6 +83,5 @@ Label1:
 	encodeErr := encoder.Encode(newTasResponse)
 	if encodeErr != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		return
 	}
 }

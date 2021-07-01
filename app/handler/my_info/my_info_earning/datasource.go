@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"paotui.sg/app/db"
+	"paotui.sg/app/handler/error_util"
 	"strings"
 )
 
@@ -32,6 +33,7 @@ type EarningTask struct {
 }
 
 func DataSource(w http.ResponseWriter, r *http.Request) {
+	defer error_util.ErrorHandle(w)
 	var getSpendingTaskResponse EarningDataSourceResponse
 	var err error
 	var getAllRows *sql.Rows
@@ -46,7 +48,12 @@ func DataSource(w http.ResponseWriter, r *http.Request) {
 	}
 
 	getAllRows, err = db.Db.Query(SQLEarningDataSource, userID)
-	defer getAllRows.Close()
+	defer func() {
+		if getAllRows != nil {
+			err = getAllRows.Close()
+			log.Println(err)
+		}
+	}()
 	if err != nil {
 		log.Println(err)
 		goto Label0
@@ -95,7 +102,6 @@ Label1:
 	encodeErr := encoder.Encode(getSpendingTaskResponse)
 	if encodeErr != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		return
 	}
 }
 func getLast4Char(str string) string {

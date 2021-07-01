@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"paotui.sg/app/db"
+	"paotui.sg/app/handler/error_util"
 	"strings"
 	"time"
 )
@@ -27,7 +28,7 @@ type RadarResponse struct {
 }
 
 func Radar(w http.ResponseWriter, r *http.Request) {
-
+	defer error_util.ErrorHandle(w)
 	var getEarningRadar RadarResponse
 	var err error
 	var getAllRows *sql.Rows
@@ -64,7 +65,12 @@ func Radar(w http.ResponseWriter, r *http.Request) {
 		finalSQL = SQLEarningRadarNonSun
 	}
 	getAllRows, err = db.Db.Query(finalSQL, userID)
-	defer getAllRows.Close()
+	defer func() {
+		if getAllRows != nil {
+			err = getAllRows.Close()
+			log.Println(err)
+		}
+	}()
 	if err != nil {
 		log.Println(err)
 		goto Label0
@@ -143,6 +149,5 @@ Label1:
 	encodeErr := encoder.Encode(getEarningRadar)
 	if encodeErr != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		return
 	}
 }

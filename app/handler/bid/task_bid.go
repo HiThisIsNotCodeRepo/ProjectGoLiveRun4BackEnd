@@ -23,8 +23,6 @@ type NewBidResponse struct {
 
 func TaskBid(w http.ResponseWriter, r *http.Request) {
 	defer error_util.ErrorHandle(w)
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "*")
 	if r.Method == http.MethodOptions {
 		return
 	}

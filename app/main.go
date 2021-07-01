@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"paotui.sg/app/db"
+	"paotui.sg/app/middleware"
 	"paotui.sg/app/router"
 )
 
@@ -18,6 +19,7 @@ func main() {
 	s = router.Category(s)
 	s = router.TaskBid(s)
 	s = router.User(s)
+	s.Use(middleware.AuthMiddleware)
 	s.Use(mux.CORSMethodMiddleware(s))
 	log.Fatalln(http.ListenAndServe(":5000", s))
 }

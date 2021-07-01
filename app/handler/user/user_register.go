@@ -26,8 +26,6 @@ type RegisterResponse struct {
 
 func Register(w http.ResponseWriter, r *http.Request) {
 	defer error_util.ErrorHandle(w)
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "*")
 	var registerRequest = RegisterRequest{}
 	var registerResponse RegisterResponse
 	var uid string

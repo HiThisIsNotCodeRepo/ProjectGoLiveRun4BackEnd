@@ -1,0 +1,28 @@
+FROM golang AS builder
+
+WORKDIR /app
+
+COPY . .
+
+RUN apt-get update -y\
+&& apt-get install -y upx\
+&& go mod download \
+&& CGO_ENABLED=0 go build -o api_server\
+&& upx --best api_server -o _upx_server\
+&& mv -f _upx_server api_server
+
+FROM scratch
+WORKDIR /app
+COPY --from=builder /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+COPY --from=builder /app/cert/cert.pem ./cert/cert.pem
+COPY --from=builder /app/cert/key.pem ./cert/key.pem
+COPY --from=builder /app/api_server .
+CMD ["./api_server"]
+
+# docker build -t magicpowerworld/kube_test -f .\DockerFile.mini .
+# docker run -p 5000:5000 --name myapiserver magicpowerworld/kube_test:latest
+# docker push magicpowerworld/kube_test
+
+# On cloud
+# docker pull magicpowerworld/kube_test
+# docker run -p 443:5000 --name myapiserver magicpowerworld/kube_test:latest

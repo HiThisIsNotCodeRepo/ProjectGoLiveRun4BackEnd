@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	privKeyPath = "./jwt/jwt_key"     // openssl genrsa -out app.rsa keysize
-	pubKeyPath  = "./jwt/jwt_key.pub" // openssl rsa -in app.rsa -pubout > app.rsa.pub
+	privKeyPath = "./app/jwt/jwt_key"     // openssl genrsa -out app.rsa keysize
+	pubKeyPath  = "./app/jwt/jwt_key.pub" // openssl rsa -in app.rsa -pubout > app.rsa.pub
 )
 
 var (

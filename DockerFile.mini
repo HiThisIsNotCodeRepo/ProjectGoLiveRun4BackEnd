@@ -13,16 +13,12 @@ RUN apt-get update -y\
 
 FROM scratch
 WORKDIR /app
-COPY --from=builder /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-COPY --from=builder /app/cert/cert.pem ./cert/cert.pem
-COPY --from=builder /app/cert/key.pem ./cert/key.pem
+COPY --from=builder /usr/share/zoneinfo/Asia/Singapore /etc/localtime
+COPY --from=builder /app/app/jwt/jwt_key ./app/jwt/jwt_key
+COPY --from=builder /app/app/jwt/jwt_key.pub ./app/jwt/jwt_key.pub
 COPY --from=builder /app/api_server .
 CMD ["./api_server"]
 
-# docker build -t magicpowerworld/kube_test -f .\DockerFile.mini .
-# docker run -p 5000:5000 --name myapiserver magicpowerworld/kube_test:latest
-# docker push magicpowerworld/kube_test
 
-# On cloud
-# docker pull magicpowerworld/kube_test
-# docker run -p 443:5000 --name myapiserver magicpowerworld/kube_test:latest
+
+

@@ -10,3 +10,10 @@ docker restart my-sql
 docker exec -it my-sql bash
 mysql -uroot -ppassword
 source /tmp/mysql.sql
+
+
+# 将含表的数据库重新制作为镜像
+# 2d2d40728497为容器id
+docker commit 2d2d40728497 magicpowerworld/paotui_mysql:20210706
+# 制作完镜像之后推送
+docker push magicpowerworld/paotui_mysql:20210706

@@ -21,5 +21,5 @@ func main() {
 	s = router.User(s)
 	s.Use(middleware.AuthMiddleware)
 	s.Use(mux.CORSMethodMiddleware(s))
-	log.Fatalln(http.ListenAndServe(":5000", s))
+	log.Fatalln(http.ListenAndServeTLS(":5000","./cert/paotui.crt","./cert/paotui.key", s))
 }

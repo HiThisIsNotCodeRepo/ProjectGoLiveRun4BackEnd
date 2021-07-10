@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
@@ -21,5 +22,5 @@ func main() {
 	s = router.User(s)
 	s.Use(middleware.AuthMiddleware)
 	s.Use(mux.CORSMethodMiddleware(s))
-	log.Fatalln(http.ListenAndServeTLS(":5000","./cert/paotui.crt","./cert/paotui.key", s))
+	log.Fatalln(http.ListenAndServeTLS(":5000", "./cert/paotui.crt", "./cert/paotui.key", handlers.CompressHandler(s)))
 }

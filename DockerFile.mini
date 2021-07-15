@@ -16,8 +16,6 @@ WORKDIR /app
 COPY --from=builder /usr/share/zoneinfo/Asia/Singapore /etc/localtime
 COPY --from=builder /app/app/jwt/jwt_key ./app/jwt/jwt_key
 COPY --from=builder /app/app/jwt/jwt_key.pub ./app/jwt/jwt_key.pub
-COPY --from=builder /app/cert/paotui.crt ./cert/paotui.crt
-COPY --from=builder /app/cert/paotui.key ./cert/paotui.key
 COPY --from=builder /app/api_server .
 CMD ["./api_server"]
 

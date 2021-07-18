@@ -11,11 +11,9 @@ RUN apt-get update -y\
 && upx --best api_server -o _upx_server\
 && mv -f _upx_server api_server
 
-FROM scratch
+FROM busybox:stable-uclibc
 WORKDIR /app
 COPY --from=builder /usr/share/zoneinfo/Asia/Singapore /etc/localtime
-COPY --from=builder /app/app/jwt/jwt_key ./app/jwt/jwt_key
-COPY --from=builder /app/app/jwt/jwt_key.pub ./app/jwt/jwt_key.pub
 COPY --from=builder /app/api_server .
 CMD ["./api_server"]
 

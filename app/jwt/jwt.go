@@ -5,13 +5,9 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"errors"
-	"io/ioutil"
 	"log"
-)
-
-const (
-	privKeyPath = "./app/jwt/jwt_key"     // openssl genrsa -out app.rsa keysize
-	pubKeyPath  = "./app/jwt/jwt_key.pub" // openssl rsa -in app.rsa -pubout > app.rsa.pub
+	"os"
+	"strings"
 )
 
 var (
@@ -23,16 +19,16 @@ var (
 )
 
 func init() {
-	signBytes, err := ioutil.ReadFile(privKeyPath)
+	var err error
+	signBytes := strings.TrimSpace(os.Getenv("JWT_KEY"))
+
+	SignKey, err = ParseRSAPrivateKeyFromPEM([]byte(signBytes))
 	fatal(err)
 
-	SignKey, err = ParseRSAPrivateKeyFromPEM(signBytes)
+	verifyBytes := strings.TrimSpace(os.Getenv("JWT_KEY_PUB"))
 	fatal(err)
 
-	verifyBytes, err := ioutil.ReadFile(pubKeyPath)
-	fatal(err)
-
-	VerifyKey, err = ParseRSAPublicKeyFromPEM(verifyBytes)
+	VerifyKey, err = ParseRSAPublicKeyFromPEM([]byte(verifyBytes))
 	fatal(err)
 }
 func ParseRSAPrivateKeyFromPEM(key []byte) (*rsa.PrivateKey, error) {

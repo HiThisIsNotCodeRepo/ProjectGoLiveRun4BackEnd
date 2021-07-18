@@ -31,6 +31,7 @@ type UserLoginResponse struct {
 	Token     string `json:"token"`
 	LastLogin string `json:"lastLogin"`
 	Email     string `json:"email"`
+	AvatarUrl string `json:"avatarUrl"`
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
@@ -39,6 +40,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	var userLoginResponse UserLoginResponse
 	var storedPassword string
 	var uid string
+	var avatarUrl string
 	var err error
 	var lastLogin string
 	var userClaim []byte
@@ -56,7 +58,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Printf("userLoginRequest:%v\n", userLoginRequest)
 	if strings.TrimSpace(userLoginRequest.Name) != "" && strings.TrimSpace(userLoginRequest.Password) != "" {
-		err = db.Db.QueryRow("SELECT uid, password,last_Login,email FROM user WHERE name = ?", userLoginRequest.Name).Scan(&uid, &storedPassword, &lastLogin, &email)
+		err = db.Db.QueryRow("SELECT uid, password,last_Login,email,avatar_url FROM user WHERE name = ?", userLoginRequest.Name).Scan(&uid, &storedPassword, &lastLogin, &email, &avatarUrl)
 		if err != nil {
 			log.Println(err)
 			goto Label0
@@ -101,6 +103,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		userLoginResponse.UserId = uid
 		userLoginResponse.LastLogin = lastLogin
 		userLoginResponse.Email = email
+		userLoginResponse.AvatarUrl = avatarUrl
 	} else {
 		userLoginResponse.Status = "error"
 		userLoginResponse.Msg = "user login data error"

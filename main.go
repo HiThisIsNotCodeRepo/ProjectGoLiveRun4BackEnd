@@ -20,6 +20,7 @@ func main() {
 	s = router.Category(s)
 	s = router.TaskBid(s)
 	s = router.User(s)
+	s = router.Avatar(s)
 	s.Use(middleware.AuthMiddleware)
 	s.Use(mux.CORSMethodMiddleware(s))
 	log.Fatalln(http.ListenAndServe(":5000", handlers.CompressHandler(s)))

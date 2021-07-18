@@ -76,7 +76,8 @@ func userInit(db *sql.DB, err error) {
 		email := fmt.Sprintf("user%d@email.com", i)
 		mobileNumber := 84994075
 		lastLogin := time.Now().Add(time.Hour * time.Duration(-i))
-		_, err = db.Exec("INSERT INTO user (uid,name,password,email,mobile_number,last_login) VALUES(?,?,?,?,?,?)", uid, name, password, email, mobileNumber, lastLogin)
+		avatarURL := "https://res.cloudinary.com/paotui/image/upload/v1626615464/user.png"
+		_, err = db.Exec("INSERT INTO user (uid,name,password,email,mobile_number,last_login,avatar_url) VALUES(?,?,?,?,?,?,?)", uid, name, password, email, mobileNumber, lastLogin, avatarURL)
 		if err != nil {
 			log.Println(err)
 		}

@@ -10,6 +10,7 @@ CREATE TABLE user
     email VARCHAR(40) COMMENT 'user email address',
     mobile_number INT UNSIGNED COMMENT 'user mobile number',
     last_login DATETIME COMMENT 'user last login datetime',
+    avatar_url VARCHAR(200) COMMENT 'user avatar url',
     PRIMARY KEY (uid)
 );
 drop table if exists category;

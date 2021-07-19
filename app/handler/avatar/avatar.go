@@ -4,8 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/cloudinary/cloudinary-go"
-	"github.com/cloudinary/cloudinary-go/api/uploader"
+	"paotui.sg/cloudinary"
+	"paotui.sg/cloudinary/api/uploader"
+
 	"log"
 	"mime/multipart"
 	"net/http"
@@ -33,7 +34,7 @@ func NewAvatar(w http.ResponseWriter, r *http.Request) {
 	var cld *cloudinary.Cloudinary
 	var ctx context.Context
 	var uploadResult *uploader.UploadResult
-	APISecret := strings.TrimSpace(os.Getenv("APISecret"))
+	APISecret := strings.TrimSpace(os.Getenv("APISECRET"))
 	fmt.Printf("newAvatar->request URI:%v\n", r.RequestURI)
 	encoder := json.NewEncoder(w)
 	if strings.TrimSpace(userID) == "" {
@@ -50,6 +51,7 @@ func NewAvatar(w http.ResponseWriter, r *http.Request) {
 	}
 	cld, err = cloudinary.NewFromParams("paotui", "354942911769922", APISecret)
 	if err != nil {
+		log.Println(err)
 		goto Label0
 	}
 	ctx = context.Background()
@@ -58,6 +60,7 @@ func NewAvatar(w http.ResponseWriter, r *http.Request) {
 		uploadFile,
 		uploader.UploadParams{PublicID: userID})
 	if err != nil {
+		log.Printf("upload err:%v\n", err)
 		goto Label0
 	}
 
